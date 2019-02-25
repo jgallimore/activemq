@@ -76,7 +76,7 @@
     <jasypt-version>1.9.2</jasypt-version>
     <jaxb-bundle-version>2.2.11_1</jaxb-bundle-version>
     <jdom-version>1.0</jdom-version>
-    <jetty9-version>9.2.26.v20180806</jetty9-version>
+    <jetty9-version>9.4.15.v20190215</jetty9-version>
     <jetty-version>${jetty9-version}</jetty-version>
     <jmdns-version>3.4.1</jmdns-version>
     <tomcat-api-version>8.0.53</tomcat-api-version>
@@ -103,7 +103,7 @@
     <org.osgi.core-version>4.3.1</org.osgi.core-version>
     <p2psockets-version>1.1.2</p2psockets-version>
     <linkedin-zookeeper-version>1.4.0</linkedin-zookeeper-version>
-    <zookeeper-version>3.4.6</zookeeper-version>
+    <zookeeper-version>3.4.13</zookeeper-version>
     <qpid-proton-version>0.31.0</qpid-proton-version>
     <qpid-jms-version>0.40.0</qpid-jms-version>
     <qpid-jms-netty-version>4.1.32.Final</qpid-jms-netty-version>
@@ -115,11 +115,11 @@
     <saxon-bundle-version>9.5.1-5_1</saxon-bundle-version>
     <scala-plugin-version>3.1.0</scala-plugin-version>
     <scala-version>2.11.0</scala-version>
-    <shiro-version>1.2.6</shiro-version>
+    <shiro-version>1.4.0</shiro-version>
     <scalatest-version>2.1.5</scalatest-version>
     <slf4j-version>1.7.25</slf4j-version>
     <snappy-version>1.1.2</snappy-version>
-    <spring-version>4.3.18.RELEASE</spring-version>
+    <spring-version>4.3.22.RELEASE</spring-version>
     <stax2-api-version>3.0.2</stax2-api-version>
     <taglibs-version>1.2.5</taglibs-version>
     <velocity-version>1.7</velocity-version>
@@ -947,6 +947,7 @@
       <dependency>
         <groupId>org.eclipse.jetty.aggregate</groupId>
         <artifactId>jetty-all</artifactId>
+        <classifier>uber</classifier>
         <version>${jetty-version}</version>
         <exclusions>
           <exclusion>
