@@ -40,13 +40,12 @@ public class WSSTransportHttpTraceTest extends WSTransportHttpTraceTest {
     public void testHttpTraceEnabled() throws Exception {
         SslContextFactory factory = new SslContextFactory();
         factory.setSslContext(broker.getSslContext().getSSLContext());
-
-        HttpTraceTestSupport.testHttpTraceEnabled("https://127.0.0.1:61623", expectedStatus, factory);
+        HttpTraceTestSupport.testHttpTraceEnabled("https://localhost:61623", expectedStatus, factory);
     }
 
     @Override
     protected String getWSConnectorURI() {
-        String uri = "wss://127.0.0.1:61623?websocket.maxTextMessageSize=99999&transport.maxIdleTime=1001";
+        String uri = "wss://localhost:61623?websocket.maxTextMessageSize=99999&transport.maxIdleTime=1001";
         uri = enableTraceParam != null ? uri + "&" + enableTraceParam : uri;
         return uri;
     }

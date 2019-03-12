@@ -49,7 +49,7 @@ public class WSSTransportTest extends WSTransportTest {
         SslContextFactory factory = new SslContextFactory();
         factory.setSslContext(broker.getSslContext().getSSLContext());
 
-        testGet("https://127.0.0.1:" + port, factory);
+        testGet("https://localhost:" + port, factory);
     }
 
     @Override
