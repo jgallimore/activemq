@@ -64,7 +64,7 @@
     <ftpserver-version>1.0.6</ftpserver-version>
     <geronimo-version>1.0</geronimo-version>
     <guava-version>27.0.1-jre</guava-version>
-    <hadoop-version>1.0.0</hadoop-version>
+    <hadoop-version>1.0.4</hadoop-version>
     <hawtbuf-version>1.11</hawtbuf-version>
     <hawtdispatch-version>1.22</hawtdispatch-version>
     <howl-version>0.1.8</howl-version>
@@ -76,7 +76,7 @@
     <jasypt-version>1.9.2</jasypt-version>
     <jaxb-bundle-version>2.2.11_1</jaxb-bundle-version>
     <jdom-version>1.0</jdom-version>
-    <jetty9-version>9.4.15.v20190215</jetty9-version>
+    <jetty9-version>9.2.26.v20180806</jetty9-version>
     <jetty-version>${jetty9-version}</jetty-version>
     <jmdns-version>3.4.1</jmdns-version>
     <tomcat-api-version>8.0.53</tomcat-api-version>
@@ -89,7 +89,7 @@
     <junit-version>4.12</junit-version>
     <hamcrest-version>1.3</hamcrest-version>
     <jxta-version>2.0</jxta-version>
-    <karaf-version>4.2.1</karaf-version>
+    <karaf-version>4.2.3</karaf-version>
     <leveldb-api-version>0.9</leveldb-api-version>
     <leveldb-version>0.9</leveldb-version>
     <leveldbjni-version>1.8</leveldbjni-version>
@@ -97,7 +97,7 @@
     <mockito-version>1.10.19</mockito-version>
     <owasp-dependency-check-version>3.3.0</owasp-dependency-check-version>
     <powermock-version>1.6.5</powermock-version>
-    <mqtt-client-version>1.14</mqtt-client-version>
+    <mqtt-client-version>1.15</mqtt-client-version>
     <openjpa-version>1.2.0</openjpa-version>
     <org-apache-derby-version>10.14.2.0</org-apache-derby-version>
     <org.osgi.core-version>4.3.1</org.osgi.core-version>
