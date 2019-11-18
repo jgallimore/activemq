@@ -60,7 +60,7 @@ public class KahaDBTest extends TestCase {
         return kaha;
     }
 
-    public void testIgnoreMissingJournalfilesOptionSetFalse() throws Exception {
+    public void atestIgnoreMissingJournalfilesOptionSetFalse() throws Exception {
         KahaDBStore kaha = createStore(true);
         kaha.setJournalMaxFileLength(1024*100);
         assertFalse(kaha.isIgnoreMissingJournalfiles());
@@ -85,7 +85,7 @@ public class KahaDBTest extends TestCase {
     }
 
 
-    public void testIgnoreMissingJournalfilesOptionSetTrue() throws Exception {
+    public void atestIgnoreMissingJournalfilesOptionSetTrue() throws Exception {
         KahaDBStore kaha = createStore(true);
         kaha.setJournalMaxFileLength(1024*100);
         assertFalse(kaha.isIgnoreMissingJournalfiles());
@@ -111,7 +111,7 @@ public class KahaDBTest extends TestCase {
     }
 
 
-    public void testCheckCorruptionNotIgnored() throws Exception {
+    public void atestCheckCorruptionNotIgnored() throws Exception {
         KahaDBStore kaha = createStore(true);
         assertTrue(kaha.isChecksumJournalFiles());
         assertFalse(kaha.isCheckForCorruptJournalFiles());
@@ -141,7 +141,7 @@ public class KahaDBTest extends TestCase {
     }
 
 
-    public void testMigrationOnNewDefaultForChecksumJournalFiles() throws Exception {
+    public void atestMigrationOnNewDefaultForChecksumJournalFiles() throws Exception {
         KahaDBStore kaha = createStore(true);
         kaha.setChecksumJournalFiles(false);
         assertFalse(kaha.isChecksumJournalFiles());
@@ -158,6 +158,27 @@ public class KahaDBTest extends TestCase {
         assertFalse(kaha.isIgnoreMissingJournalfiles());
         createBroker(kaha);
         assertEquals(1000, receiveMessages());
+    }
+
+    public void testDestroyFile() throws Exception {
+        KahaDBStore kaha = createStore(true);
+        kaha.setChecksumJournalFiles(true);
+        kaha.setCheckForCorruptJournalFiles(true);
+        assertTrue(kaha.isChecksumJournalFiles());
+        assertTrue(kaha.isCheckForCorruptJournalFiles());
+
+        kaha.setJournalMaxFileLength(1024*100);
+        BrokerService broker = createBroker(kaha);
+        sendMessages(1000);
+        broker.stop();
+        System.out.println(kaha.getDirectory().getAbsolutePath());
+
+//        kaha = createStore(false);
+//        kaha.setJournalMaxFileLength(1024*100);
+//        kaha.setCheckForCorruptJournalFiles(true);
+//        assertFalse(kaha.isIgnoreMissingJournalfiles());
+//        createBroker(kaha);
+//        assertEquals(1000, receiveMessages());
     }
 
 
