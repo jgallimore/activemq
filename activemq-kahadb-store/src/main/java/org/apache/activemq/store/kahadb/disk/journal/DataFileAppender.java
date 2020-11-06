@@ -24,6 +24,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.zip.Adler32;
 import java.util.zip.Checksum;
 
+import org.apache.activemq.broker.util.AccessLogPlugin;
 import org.apache.activemq.store.kahadb.disk.journal.Journal.JournalDiskSyncStrategy;
 import org.apache.activemq.store.kahadb.disk.util.DataByteArrayOutputStream;
 import org.apache.activemq.store.kahadb.disk.util.LinkedNodeList;
@@ -61,7 +62,7 @@ class DataFileAppender implements FileAppender {
     private Thread thread;
 
     public class WriteBatch {
-
+        protected long duration = 0;
         public final DataFile dataFile;
 
         public final LinkedNodeList<Journal.WriteCommand> writes = new LinkedNodeList<Journal.WriteCommand>();
@@ -100,6 +101,14 @@ class DataFileAppender implements FileAppender {
             dataFile.incrementLength(s);
             journal.addToTotalLength(s);
         }
+
+        public long getDuration() {
+            return duration;
+        }
+
+        public void setDuration(long duration) {
+            this.duration = duration;
+        }
     }
 
     /**
@@ -112,6 +121,17 @@ class DataFileAppender implements FileAppender {
         this.syncOnComplete = this.journal.isEnableAsyncDiskSync();
         this.periodicSync = JournalDiskSyncStrategy.PERIODIC.equals(
                 this.journal.getJournalDiskSyncStrategy());
+    }
+
+    protected void record(final String messageId, final Class cls, final String method, final long duration) {
+        try {
+            final AccessLogPlugin accessLog = (AccessLogPlugin) this.journal.getBroker().getBroker().getAdaptor(AccessLogPlugin.class);
+            if (accessLog != null) {
+                accessLog.record(messageId, cls.getSimpleName() + "." + method, duration);
+            }
+        } catch (Exception e) {
+            logger.error("Unable to record timing for " + cls.getSimpleName() + "." + method + ". Time taken: " + duration + "ms", e);
+        }
     }
 
     @Override
@@ -139,6 +159,8 @@ class DataFileAppender implements FileAppender {
                 throw exception;
             }
         }
+
+        record(null, DataFileAppender.class, "storeItem", batch.getDuration());
 
         return location;
     }
@@ -291,6 +313,8 @@ class DataFileAppender implements FileAppender {
 
                 Journal.WriteCommand write = wb.writes.getHead();
 
+                final long startWrite = System.currentTimeMillis();
+
                 // Write an empty batch control record.
                 buff.reset();
                 buff.write(EMPTY_BATCH_CONTROL_RECORD);
@@ -347,6 +371,9 @@ class DataFileAppender implements FileAppender {
                 journal.setLastAppendLocation(lastWrite.location);
 
                 signalDone(wb);
+
+                final long endWrite = System.currentTimeMillis();
+                wb.duration = endWrite - startWrite;
             }
         } catch (Throwable error) {
             logger.warn("Journal failed while writing at: " + wb.dataFile.getDataFileId() + ":" + wb.offset, error);
