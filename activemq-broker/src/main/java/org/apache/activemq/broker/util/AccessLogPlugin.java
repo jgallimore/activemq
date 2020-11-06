@@ -22,11 +22,10 @@ import org.apache.activemq.command.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Tracks and logs timings for messages being sent to a destination
@@ -35,19 +34,13 @@ import java.util.concurrent.*;
  */
 public class AccessLogPlugin extends BrokerPluginSupport {
 
-    private static final Logger LOG = LoggerFactory.getLogger(AccessLogPlugin.class);
-
+    private static final Logger LOG = LoggerFactory.getLogger("TIMING");
     private static final ThreadLocal<String> THREAD_MESSAGE_ID = new ThreadLocal<>();
-
-
     private final Timings timings = new Timings();
-    private LinkedBlockingQueue<Runnable> loggingQueue = new LinkedBlockingQueue<>(10000);
-    protected ExecutorService executor = new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS,
-            loggingQueue, runnable -> {
-        Thread thread = new Thread(runnable, "LogThread");
-        thread.setDaemon(true);
-        return thread;
-    });
+
+    public AccessLogPlugin() {
+
+    }
 
     @Override
     public void send(final ProducerBrokerExchange producerExchange, final Message messageSend) throws Exception {
@@ -89,10 +82,7 @@ public class AccessLogPlugin extends BrokerPluginSupport {
         public void end(final Message message) {
             final String messageId = message.getMessageId().toString();
             final Timing timing = inflight.remove(messageId);
-
-            executor.submit(() -> {
-                LOG.info(timing.toString());
-            });
+            LOG.debug(timing.toString());
         }
 
         public void record(final String messageId, final String what, final long duration) {

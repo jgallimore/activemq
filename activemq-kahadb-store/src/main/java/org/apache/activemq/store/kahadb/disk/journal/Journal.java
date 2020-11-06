@@ -84,7 +84,6 @@ public class Journal {
     public static final byte[] EOF_RECORD = createEofBatchAndLocationRecord();
 
     private ScheduledExecutorService scheduler;
-    private BrokerService broker;
 
     // tackle corruption when checksum is disabled or corrupt with zeros, minimize data loss
     public void corruptRecoveryLocation(Location recoveryPosition) throws IOException {
@@ -1165,14 +1164,6 @@ public class Journal {
 
     public void setDataFileRemovedListener(DataFileRemovedListener dataFileRemovedListener) {
         this.dataFileRemovedListener = dataFileRemovedListener;
-    }
-
-    public BrokerService getBroker() {
-        return broker;
-    }
-
-    public void setBroker(final BrokerService broker) {
-        this.broker = broker;
     }
 
     public static class WriteCommand extends LinkedNode<WriteCommand> {

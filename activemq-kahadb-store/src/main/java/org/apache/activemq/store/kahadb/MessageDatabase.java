@@ -1168,15 +1168,14 @@ public abstract class MessageDatabase extends ServiceSupport implements BrokerSe
 
                 long start = System.currentTimeMillis();
                 location = onJournalStoreComplete == null ? journal.write(sequence, sync) : journal.write(sequence, onJournalStoreComplete) ;
-                record(null, MessageDatabase.class, "store:journal.write()", start);
+                record(null, MessageDatabase.class, "journal_write", start);
                 long start2 = System.currentTimeMillis();
                 //Track the last async update so we know if we need to sync at the next checkpoint
                 if (!sync && journal.isJournalDiskSyncPeriodic()) {
                     lastAsyncJournalUpdate.set(location);
                 }
                 process(data, location, before);
-                record(null, MessageDatabase.class, "store:prcoess()", start);
-
+                record(null, MessageDatabase.class, "index_write", start);
                 long end = System.currentTimeMillis();
                 if (LOG_SLOW_ACCESS_TIME > 0 && end - start > LOG_SLOW_ACCESS_TIME) {
                     if (LOG.isInfoEnabled()) {
@@ -3431,7 +3430,6 @@ public abstract class MessageDatabase extends ServiceSupport implements BrokerSe
         manager.setPreallocationStrategy(
                 Journal.PreallocationStrategy.valueOf(preallocationStrategy.trim().toUpperCase()));
         manager.setJournalDiskSyncStrategy(journalDiskSyncStrategy);
-        manager.setBroker(brokerService);
         if (getDirectoryArchive() != null) {
             IOHelper.mkdirs(getDirectoryArchive());
             manager.setDirectoryArchive(getDirectoryArchive());
