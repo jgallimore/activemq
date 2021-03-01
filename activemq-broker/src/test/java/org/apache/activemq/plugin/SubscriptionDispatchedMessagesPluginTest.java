@@ -8,9 +8,9 @@ import org.apache.activemq.broker.BrokerService;
 import org.apache.activemq.broker.ConnectionContext;
 import org.apache.activemq.broker.region.Subscription;
 import org.apache.activemq.command.ConsumerInfo;
-import org.apache.activemq.plugin.SubscriptionDispatchedMessagesPlugin;
 import org.apache.activemq.selector.SelectorParser;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.jms.Connection;
@@ -33,9 +33,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.management.ManagementFactory;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class SubscriptionDispatchedMessagesPluginTest {
 
@@ -44,7 +43,7 @@ public class SubscriptionDispatchedMessagesPluginTest {
     @Test
     public void testQueueSubscription() throws Exception {
         final BrokerService broker = createBroker();
-        final MessageConsumer messageConsumer = listenOnQueue("vm://localhost", "TEST1", message -> { });
+        final MessageConsumer messageConsumer = listenOnQueue("vm://localhost", "TEST1", this::acknowledge);
         Assert.assertEquals(1, getObjectNames("TEST1").size());
 
         messageConsumer.close();
@@ -56,7 +55,7 @@ public class SubscriptionDispatchedMessagesPluginTest {
     @Test
     public void testNonDurableTopicSubscription() throws Exception {
         final BrokerService broker = createBroker();
-        final MessageConsumer messageConsumer = listenOnTopic("vm://localhost", "TOPIC1", message -> { });
+        final MessageConsumer messageConsumer = listenOnTopic("vm://localhost", "TOPIC1", this::acknowledge);
         Assert.assertEquals(1, getObjectNames("TOPIC1").size());
 
         messageConsumer.close();
@@ -68,7 +67,7 @@ public class SubscriptionDispatchedMessagesPluginTest {
     @Test
     public void testDurableTopicSubscription() throws Exception {
         final BrokerService broker = createBroker();
-        final MessageConsumer messageConsumer = listenOnTopic("vm://localhost", "TOPIC2", "ClientA", message -> { });
+        final MessageConsumer messageConsumer = listenOnTopic("vm://localhost", "TOPIC2", "ClientA", this::acknowledge);
         Assert.assertEquals(1, getObjectNames("TOPIC2").size());
 
         messageConsumer.close();
@@ -82,7 +81,7 @@ public class SubscriptionDispatchedMessagesPluginTest {
     @Test
     public void testQueueSubscriptionWithAdditionalPredicate() throws Exception {
         final BrokerService broker = createBroker("domainSelector=test", "TEST1");
-        final MessageConsumer messageConsumer = listenOnQueue("vm://localhost", "TEST1", message -> { });
+        final MessageConsumer messageConsumer = listenOnQueue("vm://localhost", "TEST1", this::acknowledge);
         Assert.assertEquals(1, getObjectNames("TEST1").size());
 
         final MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
@@ -98,7 +97,7 @@ public class SubscriptionDispatchedMessagesPluginTest {
     @Test
     public void testNonDurableTopicSubscriptionWithAdditionalPredicate() throws Exception {
         final BrokerService broker = createBroker("domainSelector=test", "TOPIC1");
-        final MessageConsumer messageConsumer = listenOnTopic("vm://localhost", "TOPIC1", message -> { });
+        final MessageConsumer messageConsumer = listenOnTopic("vm://localhost", "TOPIC1", this::acknowledge);
         Assert.assertEquals(1, getObjectNames("TOPIC1").size());
 
         final MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
@@ -114,7 +113,7 @@ public class SubscriptionDispatchedMessagesPluginTest {
     @Test
     public void testDurableTopicSubscriptionWithAdditionalPredicate() throws Exception {
         final BrokerService broker = createBroker("domainSelector=test", "TOPIC2");
-        final MessageConsumer messageConsumer = listenOnTopic("vm://localhost", "TOPIC2","ClientA", message -> { });
+        final MessageConsumer messageConsumer = listenOnTopic("vm://localhost", "TOPIC2","ClientA", this::acknowledge);
         Assert.assertEquals(1, getObjectNames("TOPIC2").size());
 
         final MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
@@ -129,22 +128,158 @@ public class SubscriptionDispatchedMessagesPluginTest {
 
     // Tests with unacknowledged messages
 
+    @Test
     public void testQueueSubscriptionWithUnackowledgedMessages() throws Exception {
+        final BrokerService broker = createBroker();
+        final MessageConsumer messageConsumer = listenOnQueue("vm://localhost", "TEST1", this::consumeAndDontAcknowledge);
 
+        produceMessagesOnQueue("vm://localhost", "TEST1", 100, null);
+        Assert.assertEquals(1, getObjectNames("TEST1").size());
+
+        final MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
+        final String[] attribute = (String[]) mBeanServer.getAttribute(getObjectNames("TEST1").iterator().next(), "UnackedMessageIds");
+        Assert.assertEquals(100, attribute.length);
+
+        messageConsumer.close();
+        Assert.assertEquals(0, getObjectNames("TEST1").size());
+
+        broker.stop();
     }
 
+    @Test
     public void testNonDurableTopicSubscriptionWithUnackowledgedMessages() throws Exception {
+        final BrokerService broker = createBroker();
+        final MessageConsumer messageConsumer = listenOnTopic("vm://localhost", "TOPIC1", this::consumeAndDontAcknowledge);
 
+        produceMessagesOnTopic("vm://localhost", "TOPIC1", 100, null);
+        Assert.assertEquals(1, getObjectNames("TOPIC1").size());
+
+        final MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
+        final String[] attribute = (String[]) mBeanServer.getAttribute(getObjectNames("TOPIC1").iterator().next(), "UnackedMessageIds");
+        Assert.assertEquals(1, attribute.length);
+        Assert.assertEquals("Not a pre-fetch subscription.", attribute[0]);
+
+        messageConsumer.close();
+        Assert.assertEquals(0, getObjectNames("TEST1").size());
+
+        broker.stop();
     }
 
+    @Test
+    @Ignore
     public void testDurableTopicSubscriptionWithUnackowledgedMessages() throws Exception {
+        final BrokerService broker = createBroker();
+        final MessageConsumer messageConsumer = listenOnTopic("vm://localhost", "TOPIC2","ClientA", this::consumeAndDontAcknowledge);
 
+        produceMessagesOnTopic("vm://localhost", "TOPIC2", 100, null);
+        Assert.assertEquals(1, getObjectNames("TOPIC2").size());
+
+        final MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
+        final String[] attribute = (String[]) mBeanServer.getAttribute(getObjectNames("TOPIC2").iterator().next(), "UnackedMessageIds");
+        Assert.assertEquals(100, attribute.length);
+
+        messageConsumer.close();
+        Assert.assertEquals(0, getObjectNames("TOPIC2").size());
+
+        broker.stop();
     }
 
     // Some additional tests to potentially reproduce the issues with stuck messages
+    @Test
+    public void testNotDispatchedTestDomainMessages() throws Exception {
+        final BrokerService broker = createBroker("domainSelector='test'", "TEST1");
 
-    public void testUnacknowledgedTestDomainMessages() throws Exception {
+        final AtomicInteger consumed = new AtomicInteger(0);
 
+        final MessageConsumer messageConsumer = listenOnQueue("vm://localhost", "TEST1", message -> {
+            try {
+                message.acknowledge();
+                consumed.incrementAndGet();
+            } catch (JMSException e) {
+                throw new RuntimeException(e);
+            }
+        });
+
+        Map<String, String> testDomainMessageProperties = new HashMap<>();
+        testDomainMessageProperties.put("domainSelector", "test");
+
+        Map<String, String> clientDomainMessageProperties = new HashMap<>();
+        clientDomainMessageProperties.put("domainSelector", "client");
+
+        // these at the head of the queue will match the additional predicate and should be consumed
+        produceMessagesOnQueue("vm://localhost", "TEST1", 2000, testDomainMessageProperties);
+
+        // these do not match the additional predicate and will not be consumed, they remain in the queue
+        produceMessagesOnQueue("vm://localhost", "TEST1", 199, clientDomainMessageProperties);
+
+        // these *do* match the predicate, and should not be stuck behind the 199 non-matching messages
+        produceMessagesOnQueue("vm://localhost", "TEST1", 5000, testDomainMessageProperties);
+
+        // we're expecting 7k messages to be dispatched and ACK'd
+        Assert.assertEquals(7000, consumed.get());
+
+        broker.stop();
+    }
+
+    @Test
+    public void testNotAckedTestDomainMessages() throws Exception {
+        final BrokerService broker = createBroker();
+
+        final AtomicInteger consumed1 = new AtomicInteger(0);
+        final AtomicInteger consumed2 = new AtomicInteger(0);
+
+        final MessageConsumer messageConsumer1 = listenOnQueue("vm://localhost", "TEST1", "domainSelector = 'test'",m -> {
+            consumed1.incrementAndGet();
+        });
+
+        final MessageConsumer messageConsumer2 = listenOnQueue("vm://localhost", "TEST1", "domainSelector = 'service'",m -> {
+            consumed2.incrementAndGet();
+            try {
+                m.acknowledge();
+            } catch (JMSException e) {
+                throw new RuntimeException(e);
+            }
+        });
+
+        Map<String, String> testDomainMessageProperties = new HashMap<>();
+        testDomainMessageProperties.put("domainSelector", "test");
+
+        Map<String, String> serviceDomainMessageProperties = new HashMap<>();
+        serviceDomainMessageProperties.put("domainSelector", "service");
+
+        // these at the head of the queue will match the additional predicate and should be consumed
+        produceMessagesOnQueue("vm://localhost", "TEST1", 10000, testDomainMessageProperties);
+
+        // these at the head of the queue will match the additional predicate and should be consumed
+        produceMessagesOnQueue("vm://localhost", "TEST1", 10000, serviceDomainMessageProperties);
+
+        final MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
+        final Iterator<ObjectName> iterator = getObjectNames("TEST1").iterator();
+        int unackedMessages = 0;
+        while (iterator.hasNext()) {
+            final ObjectName objectName = iterator.next();
+            final String[] attribute = (String[]) mBeanServer.getAttribute(objectName, "UnackedMessageIds");
+            unackedMessages += attribute.length;
+        }
+
+        Assert.assertEquals(10000, unackedMessages);
+
+        Assert.assertEquals(10000, consumed1.get());
+        Assert.assertEquals(10000, consumed2.get());
+
+        broker.stop();
+    }
+
+    private void acknowledge(final Message message) {
+        try {
+            message.acknowledge();
+        } catch (JMSException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void consumeAndDontAcknowledge(final Message message) {
+        // no-op
     }
 
     private Set<ObjectName> getObjectNames(String destinationName) throws MalformedObjectNameException {
@@ -178,10 +313,6 @@ public class SubscriptionDispatchedMessagesPluginTest {
         final TopicSubscriber subscriber = session.createDurableSubscriber(topic, clientName);
 
         return new MessageConsumerWrapper(subscriber, session, conn);
-    }
-
-    protected void createQueueConsumer(final String brokerUrl, final String queueName) throws Exception {
-
     }
 
     protected void consumeMessagesFromQueue(final String brokerUrl, final String queueName, final int numberOfMessages) throws Exception {
@@ -223,11 +354,11 @@ public class SubscriptionDispatchedMessagesPluginTest {
         return receivedMessage;
     }
 
-    protected void produceMessagesOnQueue(final String brokerUrl, final String queueName, final int numberOfMessages) throws Exception {
-        produceMessagesOnQueue(brokerUrl, queueName, numberOfMessages, 0);
+    protected void produceMessagesOnQueue(final String brokerUrl, final String queueName, final int numberOfMessages, final Map<String, String> messageProperties) throws Exception {
+        produceMessagesOnQueue(brokerUrl, queueName, numberOfMessages, 0, messageProperties);
     }
 
-    protected void produceMessagesOnQueue(final String brokerUrl, final String queueName, final int numberOfMessages, int messageSize) throws Exception {
+    protected void produceMessagesOnQueue(final String brokerUrl, final String queueName, final int numberOfMessages, int messageSize, final Map<String, String> messageProperties) throws Exception {
         final ConnectionFactory cf = new ActiveMQConnectionFactory(brokerUrl);
         final Connection conn = cf.createConnection();
         conn.start();
@@ -235,16 +366,16 @@ public class SubscriptionDispatchedMessagesPluginTest {
         final Session session = conn.createSession(false, Session.AUTO_ACKNOWLEDGE);
 
         final Queue queue = session.createQueue(queueName);
-        sendMessagesToDestination(numberOfMessages, messageSize, session, queue);
+        sendMessagesToDestination(numberOfMessages, messageSize, session, queue, messageProperties);
         session.close();
         conn.close();
     }
 
-    protected void produceMessagesOnTopic(final String brokerUrl, final String topicName, final int numberOfMessages) throws Exception {
-        produceMessagesOnTopic(brokerUrl, topicName, numberOfMessages, 0);
+    protected void produceMessagesOnTopic(final String brokerUrl, final String topicName, final int numberOfMessages, final Map<String, String> messageProperties) throws Exception {
+        produceMessagesOnTopic(brokerUrl, topicName, numberOfMessages, 0, messageProperties);
     }
 
-    private void produceMessagesOnTopic(final String brokerUrl, final String topicName, final int numberOfMessages, int messageSize) throws Exception {
+    private void produceMessagesOnTopic(final String brokerUrl, final String topicName, final int numberOfMessages, int messageSize, final Map<String, String> messageProperties) throws Exception {
         final ConnectionFactory cf = new ActiveMQConnectionFactory(brokerUrl);
         final Connection conn = cf.createConnection();
         conn.start();
@@ -252,12 +383,12 @@ public class SubscriptionDispatchedMessagesPluginTest {
         final Session session = conn.createSession(false, Session.AUTO_ACKNOWLEDGE);
 
         final Topic topic = session.createTopic(topicName);
-        sendMessagesToDestination(numberOfMessages, messageSize, session, topic);
+        sendMessagesToDestination(numberOfMessages, messageSize, session, topic, messageProperties);
         session.close();
         conn.close();
     }
 
-    private void sendMessagesToDestination(final int numberOfMessages, final int messageSize, final Session session, final Destination dest) throws JMSException, IOException {
+    private void sendMessagesToDestination(final int numberOfMessages, final int messageSize, final Session session, final Destination dest, final Map<String, String> messageProperties) throws JMSException, IOException {
         final MessageProducer producer = session.createProducer(dest);
 
         for (int i = 0; i < numberOfMessages; i++) {
@@ -269,6 +400,17 @@ public class SubscriptionDispatchedMessagesPluginTest {
             }
 
             final TextMessage message = session.createTextMessage(messageText);
+
+            if (messageProperties != null) {
+                messageProperties.forEach((k, v) -> {
+                    try {
+                        message.setStringProperty(k, v);
+                    } catch (JMSException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
+            }
+
             message.setIntProperty("messageno", i);
             producer.send(message);
         }
@@ -323,6 +465,10 @@ public class SubscriptionDispatchedMessagesPluginTest {
     }
 
     protected MessageConsumer listenOnQueue(final String brokerUri, final String queueName, final MessageListener messageListener) throws Exception {
+        return listenOnQueue(brokerUri, queueName, null, messageListener);
+    }
+
+    protected MessageConsumer listenOnQueue(final String brokerUri, final String queueName, final String selector, final MessageListener messageListener) throws Exception {
         final ConnectionFactory cf = new ActiveMQConnectionFactory(brokerUri);
         final Connection conn = cf.createConnection();
         conn.start();
@@ -330,7 +476,7 @@ public class SubscriptionDispatchedMessagesPluginTest {
         final Session session = conn.createSession(false, Session.CLIENT_ACKNOWLEDGE);
 
         final Queue queue = session.createQueue(queueName);
-        final MessageConsumer consumer = session.createConsumer(queue);
+        final MessageConsumer consumer = session.createConsumer(queue, selector);
         consumer.setMessageListener(messageListener);
 
         return new MessageConsumerWrapper(consumer, session, conn);
@@ -359,7 +505,7 @@ public class SubscriptionDispatchedMessagesPluginTest {
         final Session session = conn.createSession(false, Session.AUTO_ACKNOWLEDGE);
 
         final Topic topic = session.createTopic(topicName);
-        final TopicSubscriber consumer = session.createDurableSubscriber(topic, clientID);
+        final TopicSubscriber consumer = session.createDurableSubscriber(topic, clientID + "_" + topicName +"_subscription");
         consumer.setMessageListener(messageListener);
 
         return new MessageConsumerWrapper(consumer, session, conn);
