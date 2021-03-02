@@ -6,7 +6,13 @@ import org.apache.activemq.broker.BrokerFilter;
 import org.apache.activemq.broker.BrokerPlugin;
 import org.apache.activemq.broker.BrokerService;
 import org.apache.activemq.broker.ConnectionContext;
+import org.apache.activemq.broker.region.DestinationFilter;
+import org.apache.activemq.broker.region.DestinationInterceptor;
 import org.apache.activemq.broker.region.Subscription;
+import org.apache.activemq.broker.region.virtual.VirtualDestination;
+import org.apache.activemq.broker.region.virtual.VirtualDestinationInterceptor;
+import org.apache.activemq.broker.region.virtual.VirtualTopic;
+import org.apache.activemq.command.ActiveMQQueue;
 import org.apache.activemq.command.ConsumerInfo;
 import org.apache.activemq.selector.SelectorParser;
 import org.junit.Assert;
@@ -33,6 +39,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.management.ManagementFactory;
+import java.lang.reflect.Field;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -218,6 +225,8 @@ public class SubscriptionDispatchedMessagesPluginTest {
         // we're expecting 7k messages to be dispatched and ACK'd
         Assert.assertEquals(7000, consumed.get());
 
+        messageConsumer.close();
+
         broker.stop();
     }
 
@@ -267,7 +276,92 @@ public class SubscriptionDispatchedMessagesPluginTest {
         Assert.assertEquals(10000, consumed1.get());
         Assert.assertEquals(10000, consumed2.get());
 
+
+        messageConsumer1.close();
+        messageConsumer2.close();
         broker.stop();
+    }
+
+    @Test
+    public void testSelectorAwareDomainMessages() throws Exception {
+        final BrokerService broker = createBroker("domainSelector='test'", "Consumer.A.VirtualTopic.TEST1");
+        turnOnSelectorAwareVirtualTopics(broker);
+
+        final AtomicInteger consumed = new AtomicInteger(0);
+
+        final MessageConsumer messageConsumer1 = listenOnQueue("vm://localhost", "Consumer.A.VirtualTopic.TEST1" ,m -> {
+            consumed.incrementAndGet();
+            try {
+                m.acknowledge();
+            } catch (JMSException e) {
+                throw new RuntimeException(e);
+            }
+        });
+
+        Map<String, String> testDomainMessageProperties = new HashMap<>();
+        testDomainMessageProperties.put("domainSelector", "test");
+
+        Map<String, String> serviceDomainMessageProperties = new HashMap<>();
+        serviceDomainMessageProperties.put("domainSelector", "service");
+
+        // these at the head of the queue will match the additional predicate and should be consumed
+        produceMessagesOnTopic("vm://localhost", "VirtualTopic.TEST1", 10000, testDomainMessageProperties);
+        produceMessagesOnTopic("vm://localhost", "VirtualTopic.TEST1", 10000, serviceDomainMessageProperties);
+        produceMessagesOnTopic("vm://localhost", "VirtualTopic.TEST1", 10000, testDomainMessageProperties);
+
+        final MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
+        final Iterator<ObjectName> iterator = getObjectNames("Consumer.A.VirtualTopic.TEST1").iterator();
+        int unackedMessages = 0;
+        while (iterator.hasNext()) {
+            final ObjectName objectName = iterator.next();
+            final String[] attribute = (String[]) mBeanServer.getAttribute(objectName, "UnackedMessageIds");
+            unackedMessages += attribute.length;
+        }
+
+        Assert.assertEquals(0, unackedMessages);
+        Assert.assertEquals(20000, consumed.get());
+
+        final org.apache.activemq.broker.region.Destination destination = broker.getRegionBroker().getDestinationMap().get(new ActiveMQQueue("Consumer.A.VirtualTopic.TEST1"));
+        Assert.assertEquals(0, getPendingMessageCount(destination));
+
+        messageConsumer1.close();
+        broker.stop();
+    }
+
+    private long getPendingMessageCount(org.apache.activemq.broker.region.Destination destination) {
+        if (destination instanceof org.apache.activemq.broker.region.Queue) {
+            return ((org.apache.activemq.broker.region.Queue) destination).getPendingMessageCount();
+        }
+
+        if (destination instanceof DestinationFilter) {
+            try {
+                final Field nextField = DestinationFilter.class.getDeclaredField("next");
+                nextField.setAccessible(true);
+                final Object o = nextField.get(destination);
+                if (o instanceof org.apache.activemq.broker.region.Destination) {
+                    return getPendingMessageCount((org.apache.activemq.broker.region.Destination) o);
+                }
+            } catch (NoSuchFieldException | IllegalAccessException e) {
+                throw new IllegalArgumentException("Unable to get pending message count from " + destination.getClass().getCanonicalName());
+            }
+        }
+
+        throw new IllegalArgumentException("Unable to get pending message count from " + destination.getClass().getCanonicalName());
+    }
+
+    private void turnOnSelectorAwareVirtualTopics(BrokerService broker) {
+        final DestinationInterceptor[] destinationInterceptors = broker.getDestinationInterceptors();
+        for (final DestinationInterceptor destinationInterceptor : destinationInterceptors) {
+            if (destinationInterceptor instanceof VirtualDestinationInterceptor) {
+                final VirtualDestinationInterceptor virtualDestinationInterceptor = (VirtualDestinationInterceptor) destinationInterceptor;
+                final VirtualDestination[] virtualDestinations = virtualDestinationInterceptor.getVirtualDestinations();
+                for (final VirtualDestination virtualDestination : virtualDestinations) {
+                    if (virtualDestination instanceof VirtualTopic) {
+                        ((VirtualTopic)virtualDestination).setSelectorAware(true);
+                    }
+                }
+            }
+        }
     }
 
     private void acknowledge(final Message message) {

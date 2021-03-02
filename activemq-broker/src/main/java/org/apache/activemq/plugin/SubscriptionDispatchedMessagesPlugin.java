@@ -12,6 +12,8 @@ import org.apache.activemq.broker.region.PrefetchSubscription;
 import org.apache.activemq.broker.region.Subscription;
 import org.apache.activemq.command.ConsumerInfo;
 import org.apache.activemq.command.RemoveSubscriptionInfo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.management.JMException;
 import javax.management.MalformedObjectNameException;
@@ -19,10 +21,10 @@ import javax.management.ObjectName;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 /**
@@ -45,6 +47,8 @@ import java.util.stream.Collectors;
  */
 public class SubscriptionDispatchedMessagesPlugin implements BrokerPlugin {
 
+    private static final Logger logger = LoggerFactory.getLogger(SubscriptionDispatchedMessagesPlugin.class);
+
     /**
      * Inserts an implementation of org.apache.activemq.broker.Broker into the chain. This returns an implementation of
      * org.apache.activemq.broker.Broker that delegates to the given broker, allow us to wrap method invocations.
@@ -54,7 +58,15 @@ public class SubscriptionDispatchedMessagesPlugin implements BrokerPlugin {
      */
     @Override
     public Broker installPlugin(final Broker broker) throws Exception {
-        return new SubscriptionDispatchedMessagesBroker(broker);
+        logger.debug("SubscriptionDispatchedMessagesPlugin::installPlugin started");
+        try {
+            return new SubscriptionDispatchedMessagesBroker(broker);
+        } catch (final Exception e) {
+            logger.error("SubscriptionDispatchedMessagesPlugin::installPlugin error " + e.getMessage(), e);
+            throw e;
+        } finally {
+            logger.debug("SubscriptionDispatchedMessagesPlugin::installPlugin complete");
+        }
     }
 
     /**
@@ -67,7 +79,7 @@ public class SubscriptionDispatchedMessagesPlugin implements BrokerPlugin {
          * HashMap to track the MBeans registered against the subscriptions they relate to. This allows MBeans to be
          * unregistered and cleaned up appropriately
          */
-        private Map<Subscription, ObjectName> registeredMBeans = new HashMap<>();
+        private Map<Subscription, ObjectName> registeredMBeans = new ConcurrentHashMap<>();
 
         /**
          * Constructor which takes in the next broker plugin in the chain
@@ -88,12 +100,19 @@ public class SubscriptionDispatchedMessagesPlugin implements BrokerPlugin {
          */
         @Override
         public Subscription addConsumer(final ConnectionContext context, final ConsumerInfo info) throws Exception {
-            final Subscription subscription = super.addConsumer(context, info);
+            logger.debug("SubscriptionDispatchedMessagesBroker::addConsumer started");
+            try {
+                final Subscription subscription = super.addConsumer(context, info);
+                final ObjectName objectName = register(context, info, subscription);
 
-            final ObjectName objectName = register(context, info, subscription);
-
-            registeredMBeans.put(subscription, objectName);
-            return subscription;
+                registeredMBeans.put(subscription, objectName);
+                return subscription;
+            } catch (final Exception e) {
+                logger.error("SubscriptionDispatchedMessagesBroker::addConsumer error " + e.getMessage(), e);
+                throw e;
+            } finally {
+                logger.debug("SubscriptionDispatchedMessagesBroker::addConsumer complete");
+            }
         }
 
         /**
@@ -106,10 +125,18 @@ public class SubscriptionDispatchedMessagesPlugin implements BrokerPlugin {
          * @throws Exception
          */
         private ObjectName register(final ConnectionContext context, final ConsumerInfo info, final Subscription subscription) throws Exception {
-            final ObjectName objectName = getObjectName(context, info);
-            AnnotatedMBean.registerMBean(next.getBrokerService().getManagementContext(), new SubscriptionAdditionalInfoView(subscription), objectName);
+            logger.debug("SubscriptionDispatchedMessagesBroker::register started");
+            try {
+                final ObjectName objectName = getObjectName(context, info);
+                AnnotatedMBean.registerMBean(next.getBrokerService().getManagementContext(), new SubscriptionAdditionalInfoView(subscription), objectName);
 
-            return objectName;
+                return objectName;
+            } catch (final Exception e) {
+                logger.error("SubscriptionDispatchedMessagesBroker::register error " + e.getMessage(), e);
+                throw e;
+            } finally {
+                logger.debug("SubscriptionDispatchedMessagesBroker::register complete");
+            }
         }
 
         /**
@@ -122,8 +149,16 @@ public class SubscriptionDispatchedMessagesPlugin implements BrokerPlugin {
          * @throws MalformedObjectNameException
          */
         private ObjectName getObjectName(final ConnectionContext context, final ConsumerInfo info) throws MalformedObjectNameException {
-            final ObjectName subscriptionName = BrokerMBeanSupport.createSubscriptionName(next.getBrokerService().getBrokerObjectName(), context.getClientId(), info);
-            return new ObjectName(subscriptionName.toString() + ",view=extended");
+            logger.debug("SubscriptionDispatchedMessagesBroker::register started");
+            try {
+                final ObjectName subscriptionName = BrokerMBeanSupport.createSubscriptionName(next.getBrokerService().getBrokerObjectName(), context.getClientId(), info);
+                return new ObjectName(subscriptionName.toString() + ",view=extended");
+            } catch (final Exception e) {
+                logger.error("SubscriptionDispatchedMessagesBroker::register error " + e.getMessage(), e);
+                throw e;
+            } finally {
+                logger.debug("SubscriptionDispatchedMessagesBroker::register complete");
+            }
         }
 
         /**
@@ -135,8 +170,16 @@ public class SubscriptionDispatchedMessagesPlugin implements BrokerPlugin {
          */
         @Override
         public void removeSubscription(final ConnectionContext context, final RemoveSubscriptionInfo info) throws Exception {
-            super.removeSubscription(context, info);
-            removeMBean(info.getClientId(), info.getSubscriptionName());
+            logger.debug("SubscriptionDispatchedMessagesBroker::removeSubscription started");
+            try {
+                super.removeSubscription(context, info);
+                removeMBean(info.getClientId(), info.getSubscriptionName());
+            } catch (final Exception e) {
+                logger.error("SubscriptionDispatchedMessagesBroker::removeSubscription error " + e.getMessage(), e);
+                throw e;
+            } finally {
+                logger.debug("SubscriptionDispatchedMessagesBroker::removeSubscription complete");
+            }
         }
 
         /**
@@ -146,16 +189,24 @@ public class SubscriptionDispatchedMessagesPlugin implements BrokerPlugin {
          * @throws JMException
          */
         private void removeMBean(final String clientId, final String subscriptionName) throws JMException {
-            final Set<Subscription> subscriptions = registeredMBeans.keySet();
-            for (final Subscription subscription : subscriptions) {
+            logger.debug("SubscriptionDispatchedMessagesBroker::removeMBean started");
+            try {
+                final Set<Subscription> subscriptions = registeredMBeans.keySet();
+                for (final Subscription subscription : subscriptions) {
 
-                if (subscription.getConsumerInfo() == null) continue;
+                    if (subscription.getConsumerInfo() == null) continue;
 
-                if (isEqual(subscription.getConsumerInfo().getClientId(), clientId)
-                    && isEqual(subscription.getConsumerInfo().getSubscriptionName(), subscriptionName))  {
-                    final ObjectName objectName = registeredMBeans.remove(subscription);
-                    next.getBrokerService().getManagementContext().unregisterMBean(objectName);
+                    if (isEqual(subscription.getConsumerInfo().getClientId(), clientId)
+                        && isEqual(subscription.getConsumerInfo().getSubscriptionName(), subscriptionName))  {
+                        final ObjectName objectName = registeredMBeans.remove(subscription);
+                        next.getBrokerService().getManagementContext().unregisterMBean(objectName);
+                    }
                 }
+            } catch (final Exception e) {
+                logger.error("SubscriptionDispatchedMessagesBroker::removeMBean error " + e.getMessage(), e);
+                throw e;
+            } finally {
+                logger.debug("SubscriptionDispatchedMessagesBroker::removeMBean complete");
             }
         }
 
@@ -188,8 +239,17 @@ public class SubscriptionDispatchedMessagesPlugin implements BrokerPlugin {
          */
         @Override
         public void removeConsumer(final ConnectionContext context, final ConsumerInfo info) throws Exception {
-            super.removeConsumer(context, info);
+            logger.debug("SubscriptionDispatchedMessagesBroker::removeConsumer started");
+            try {
+
+                super.removeConsumer(context, info);
             removeMBean(info.getClientId(), info.getSubscriptionName());
+            } catch (final Exception e) {
+                logger.error("SubscriptionDispatchedMessagesBroker::removeConsumer error " + e.getMessage(), e);
+                throw e;
+            } finally {
+                logger.debug("SubscriptionDispatchedMessagesBroker::removeConsumer complete");
+            }
         }
     }
 
