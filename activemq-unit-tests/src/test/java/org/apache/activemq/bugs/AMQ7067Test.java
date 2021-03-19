@@ -27,9 +27,11 @@ import org.apache.activemq.broker.jmx.DestinationViewMBean;
 import org.apache.activemq.broker.jmx.PersistenceAdapterViewMBean;
 import org.apache.activemq.broker.jmx.QueueViewMBean;
 import org.apache.activemq.broker.jmx.RecoveredXATransactionViewMBean;
+import org.apache.activemq.command.ActiveMQQueue;
 import org.apache.activemq.command.TransactionId;
 import org.apache.activemq.command.XATransactionId;
 import org.apache.activemq.store.kahadb.KahaDBPersistenceAdapter;
+import org.apache.activemq.store.kahadb.KahaDBStore;
 import org.apache.activemq.store.kahadb.MessageDatabase;
 import org.apache.activemq.util.JMXSupport;
 import org.apache.activemq.util.Wait;
@@ -524,6 +526,74 @@ public class AMQ7067Test {
         } catch (UndeclaredThrowableException expected) {
             assertTrue(expected.getCause() instanceof InstanceNotFoundException);
         }
+    }
+
+    @Test
+    public void testForwardAcksAndCommitsWithLocalTransaction() throws Exception {
+        final Connection connection = ACTIVE_MQ_NON_XA_CONNECTION_FACTORY.createConnection();
+        connection.start();
+
+        Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+        Queue holdKahaDb = session.createQueue("holdKahaDb");
+        MessageProducer holdKahaDbProducer = session.createProducer(holdKahaDb);
+        TextMessage helloMessage = session.createTextMessage(StringUtils.repeat("a", 10));
+        holdKahaDbProducer.send(helloMessage);
+        Queue queue = session.createQueue("test");
+
+        for (int i = 0; i < 5; i++) {
+            produce(connection, queue, 60, 512 * 1024);
+            consume(connection, queue, 30, true);
+        }
+
+        Wait.waitFor(new Wait.Condition() {
+            @Override
+            public boolean isSatisified() throws Exception {
+                return 150 == getQueueSize(queue.getQueueName());
+            }
+        });
+
+        // force gc
+        final KahaDBPersistenceAdapter persistenceAdapter = (KahaDBPersistenceAdapter) broker.getPersistenceAdapter();
+        final KahaDBStore store = persistenceAdapter.getStore();
+        store.requestAckCompaction();
+        Thread.sleep(120000);
+
+        connection.close();
+        curruptIndexFile(getDataDirectory());
+
+        broker.stop();
+        broker.waitUntilStopped();
+        createBroker();
+        broker.waitUntilStarted();
+
+        while(true) {
+            try {
+                TimeUnit.SECONDS.sleep(1);
+                System.out.println(String.format("QueueSize %s: %d", holdKahaDb.getQueueName(), getQueueSize(holdKahaDb.getQueueName())));
+                break;
+            } catch (Exception ex) {
+                System.out.println(ex.getMessage());
+                break;
+            }
+        }
+
+        assertEquals(1, getQueueSize(holdKahaDb.getQueueName()));
+        assertEquals(150, getQueueSize(queue.getQueueName()));
+    }
+
+    private static void consume(Connection connection, Queue queue, int messageCount, boolean transacted) throws JMSException {
+        final Session session = connection.createSession(transacted, transacted ? 0 : Session.AUTO_ACKNOWLEDGE);
+        final MessageConsumer consumer = session.createConsumer(queue);
+
+        int messagesConsumed = 0;
+
+        while (consumer.receive(1000) != null && messagesConsumed < messageCount) {
+            messagesConsumed++;
+            session.commit();
+        }
+
+        System.out.println(messagesConsumed + " messages consumed from " + queue.getQueueName());
+        session.close();
     }
 
     protected static void createDanglingTransaction(XAResource xaRes, XASession xaSession, Queue queue) throws JMSException, IOException, XAException {

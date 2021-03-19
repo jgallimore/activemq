@@ -2031,7 +2031,7 @@ public abstract class MessageDatabase extends ServiceSupport implements BrokerSe
 
                         LOG.trace("No files GC'd checking if threshold to ACK compaction has been met.");
                         try {
-                            scheduler.execute(new AckCompactionRunner());
+                            requestAckCompaction();
                         } catch (Exception ex) {
                             LOG.warn("Error on queueing the Ack Compactor", ex);
                         }
@@ -2052,6 +2052,11 @@ public abstract class MessageDatabase extends ServiceSupport implements BrokerSe
 
         LOG.debug("Checkpoint done.");
         return gcCandidateSet;
+    }
+
+    /* only provided for testing purposes, see test in AMQ7067 */
+    public void requestAckCompaction() {
+        new AckCompactionRunner().run();
     }
 
     private final class AckCompactionRunner implements Runnable {
@@ -2236,7 +2241,7 @@ public abstract class MessageDatabase extends ServiceSupport implements BrokerSe
                 result = true;
             } else if (command instanceof KahaCommitCommand) {
                 KahaCommitCommand kahaCommitCommand = (KahaCommitCommand) command;
-                if (kahaCommitCommand.hasTransactionInfo() && kahaCommitCommand.getTransactionInfo().hasXaTransactionId()) {
+                if (kahaCommitCommand.hasTransactionInfo())  {
                     result = true;
                 }
             }
