@@ -530,14 +530,16 @@ public class AMQ7067Test {
 
     @Test
     public void testForwardAcksAndCommitsWithLocalTransaction() throws Exception {
+        ((KahaDBPersistenceAdapter)broker.getPersistenceAdapter()).setCompactAcksAfterNoGC(2);
         final Connection connection = ACTIVE_MQ_NON_XA_CONNECTION_FACTORY.createConnection();
         connection.start();
 
-        Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+        Session session = connection.createSession(true, Session.SESSION_TRANSACTED);
         Queue holdKahaDb = session.createQueue("holdKahaDb");
         MessageProducer holdKahaDbProducer = session.createProducer(holdKahaDb);
         TextMessage helloMessage = session.createTextMessage(StringUtils.repeat("a", 10));
         holdKahaDbProducer.send(helloMessage);
+        session.commit();
         Queue queue = session.createQueue("test");
 
         for (int i = 0; i < 5; i++) {
@@ -552,11 +554,17 @@ public class AMQ7067Test {
             }
         });
 
-        // force gc
-        final KahaDBPersistenceAdapter persistenceAdapter = (KahaDBPersistenceAdapter) broker.getPersistenceAdapter();
-        final KahaDBStore store = persistenceAdapter.getStore();
-        store.requestAckCompaction();
-        Thread.sleep(120000);
+        // force gc, n data files requires n cycles
+        int limit = ((KahaDBPersistenceAdapter)broker.getPersistenceAdapter()).getCompactAcksAfterNoGC() + 1;
+        for (int dataFilesToMove = 0; dataFilesToMove < 10; dataFilesToMove++) {
+            for (int i = 0; i < limit; i++) {
+                broker.getPersistenceAdapter().checkpoint(true);
+            }
+            // ack compaction task operates in the background
+            TimeUnit.SECONDS.sleep(2);
+        }
+
+        session.commit();
 
         connection.close();
         curruptIndexFile(getDataDirectory());
