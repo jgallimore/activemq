@@ -235,7 +235,7 @@ public class DuplexAdvisoryRaceTest {
 
     protected NetworkConnector bridgeBrokers(BrokerService localBroker, BrokerService remoteBroker) throws Exception {
 
-        String uri = "static:(failover:(" + networkConnectorUrlString + "?socketBufferSize=1024&trace=false)?maxReconnectAttempts=0)";
+        String uri = "static:(failover:(" + networkConnectorUrlString + "?socketBufferSize=1024&trace=true)?maxReconnectAttempts=0)";
 
         NetworkConnector connector = new DiscoveryNetworkConnector(new URI(uri));
         connector.setName(localBroker.getBrokerName() + "-to-" + remoteBroker.getBrokerName());
