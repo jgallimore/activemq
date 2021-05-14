@@ -28,6 +28,7 @@ public abstract class TransportThreadSupport extends TransportSupport implements
     private Thread runner;
     // should be a multiple of 128k
     private long stackSize;
+    private StackTraceElement[] startedAt;
 
     public boolean isDaemon() {
         return daemon;
@@ -38,6 +39,7 @@ public abstract class TransportThreadSupport extends TransportSupport implements
     }
 
     protected void doStart() throws Exception {
+        startedAt = Thread.currentThread().getStackTrace();
         runner = new Thread(null, this, "ActiveMQ Transport: " + toString(), stackSize);
         runner.setDaemon(daemon);
         runner.start();

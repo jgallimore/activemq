@@ -85,7 +85,9 @@ import org.apache.activemq.command.SessionInfo;
 import org.apache.activemq.command.ShutdownInfo;
 import org.apache.activemq.command.SubscriptionInfo;
 import org.apache.activemq.command.WireFormatInfo;
+import org.apache.activemq.filter.BooleanExpression;
 import org.apache.activemq.filter.DestinationFilter;
+import org.apache.activemq.filter.LogicExpression;
 import org.apache.activemq.filter.NonCachedMessageEvaluationContext;
 import org.apache.activemq.security.SecurityContext;
 import org.apache.activemq.transport.DefaultTransportListener;
@@ -1620,7 +1622,18 @@ public abstract class DemandForwardingBridgeSupport implements NetworkBridge, Br
         if (!info.isDurable()) {
             // This works for now since we use a VM connection to the local broker.
             // may need to change if we ever subscribe to a remote broker.
+
             sub.getLocalInfo().setAdditionalPredicate(sub.getNetworkBridgeFilter());
+
+            // do we want to merge in additional predicates here?, if not, we could clear it out on the other side of the bridge.
+//            BooleanExpression additionalPredicate = sub.getLocalInfo().getAdditionalPredicate();
+//            if (additionalPredicate == null) {
+//                additionalPredicate = sub.getNetworkBridgeFilter();
+//            } else {
+//                additionalPredicate = LogicExpression.createAND(additionalPredicate, sub.getNetworkBridgeFilter());
+//            }
+//
+//            sub.getLocalInfo().setAdditionalPredicate(additionalPredicate);
         } else {
             sub.setLocalDurableSubscriber(new SubscriptionInfo(info.getClientId(), info.getSubscriptionName()));
         }

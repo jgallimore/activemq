@@ -38,6 +38,11 @@ public class MessageDispatch extends BaseCommand {
     protected transient TransmitCallback transmitCallback;
     protected transient Throwable rollbackCause;
 
+    public MessageDispatch() {
+        final RuntimeException e = new RuntimeException();
+        e.printStackTrace();
+    }
+
     @Override
     public byte getDataStructureType() {
         return DATA_STRUCTURE_TYPE;

@@ -29,6 +29,8 @@ import org.apache.activemq.filter.MessageEvaluationContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.jms.JMSException;
+
 /**
  * implement conditional behavior for queue consumers, allows replaying back to
  * origin if no consumers are present on the local broker after a configurable
@@ -111,7 +113,7 @@ public class ConditionalNetworkBridgeFilterFactory implements NetworkBridgeFilte
         private boolean selectorAware = false;
 
         @Override
-        protected boolean matchesForwardingFilter(Message message, final MessageEvaluationContext mec) {
+        protected boolean matchesForwardingFilter(Message message, final MessageEvaluationContext mec) throws JMSException {
             boolean match = true;
             if (mec.getDestination().isQueue() && contains(message.getBrokerPath(), networkBrokerId)) {
                 // potential replay back to origin

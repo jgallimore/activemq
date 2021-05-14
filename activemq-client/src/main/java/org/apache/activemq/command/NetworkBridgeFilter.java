@@ -80,7 +80,7 @@ public class NetworkBridgeFilter implements DataStructure, BooleanExpression {
         return matches(message) ? Boolean.TRUE : Boolean.FALSE;
     }
 
-    protected boolean matchesForwardingFilter(Message message, MessageEvaluationContext mec) {
+    protected boolean matchesForwardingFilter(Message message, MessageEvaluationContext mec) throws JMSException {
 
         if (contains(message.getBrokerPath(), networkBrokerId)) {
             if (LOG.isTraceEnabled()) {
@@ -125,6 +125,11 @@ public class NetworkBridgeFilter implements DataStructure, BooleanExpression {
                 }
             }
         }
+
+        if (consumerInfo.getAdditionalPredicate() != null) {
+            return consumerInfo.getAdditionalPredicate().matches(mec);
+        }
+
         return true;
     }
 

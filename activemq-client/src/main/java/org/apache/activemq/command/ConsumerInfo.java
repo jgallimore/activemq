@@ -71,6 +71,8 @@ public class ConsumerInfo extends BaseCommand implements TransientInitializer {
     // originated from a
     // network connection
 
+    private transient StackTraceElement[] createdAt = Thread.currentThread().getStackTrace();
+
     public ConsumerInfo() {
     }
 
@@ -111,6 +113,7 @@ public class ConsumerInfo extends BaseCommand implements TransientInitializer {
             }
             info.networkConsumerIds.addAll(networkConsumerIds);
         }
+        info.additionalPredicate = additionalPredicate;
     }
 
     public boolean isDurable() {
@@ -344,7 +347,18 @@ public class ConsumerInfo extends BaseCommand implements TransientInitializer {
     }
 
     public void setAdditionalPredicate(BooleanExpression additionalPredicate) {
-        this.additionalPredicate = additionalPredicate;
+        if (additionalPredicate == null) {
+            this.additionalPredicate = null;
+            return;
+        }
+
+        // If the expression doesn't implement DataStructure, let's wrap with something that does
+        // in order to allow the predicate to go over the wire as a string
+        if (additionalPredicate instanceof DataStructure) {
+            this.additionalPredicate = additionalPredicate;
+        } else {
+            this.additionalPredicate = new BooleanExpressionWrapper(additionalPredicate);
+        }
     }
 
     @Override

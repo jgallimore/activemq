@@ -51,6 +51,7 @@ public class MarshallerFactory {
         add(new ActiveMQTempTopicMarshaller());
         add(new ActiveMQTextMessageMarshaller());
         add(new ActiveMQTopicMarshaller());
+        add(new BooleanExpressionWrapperMarshaller());
         add(new BrokerIdMarshaller());
         add(new BrokerInfoMarshaller());
         add(new BrokerSubscriptionInfoMarshaller());

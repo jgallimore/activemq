@@ -145,6 +145,7 @@ public interface CommandTypes {
     byte MESSAGE_DISPATCH_NOTIFICATION = 90;
     byte NETWORK_BRIDGE_FILTER = 91;
     byte BROKER_SUBSCRIPTION_INFO = 92;
+    byte BOOLEAN_EXPRESSION = 93;
 
     // /////////////////////////////////////////////////
     //
