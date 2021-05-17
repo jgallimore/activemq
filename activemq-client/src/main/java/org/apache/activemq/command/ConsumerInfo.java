@@ -71,8 +71,6 @@ public class ConsumerInfo extends BaseCommand implements TransientInitializer {
     // originated from a
     // network connection
 
-    private transient StackTraceElement[] createdAt = Thread.currentThread().getStackTrace();
-
     public ConsumerInfo() {
     }
 
