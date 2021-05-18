@@ -126,9 +126,9 @@ public class NetworkBridgeFilter implements DataStructure, BooleanExpression {
             }
         }
 
-        if (consumerInfo.getAdditionalPredicate() != null) {
-            return consumerInfo.getAdditionalPredicate().matches(mec);
-        }
+//        if (consumerInfo.getAdditionalPredicate() != null) {
+//            return consumerInfo.getAdditionalPredicate().matches(mec);
+//        }
 
         return true;
     }
