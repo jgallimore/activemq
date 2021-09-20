@@ -39,8 +39,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 public class BrokerDestinationViewTest {
 
     protected BrokerService brokerService;

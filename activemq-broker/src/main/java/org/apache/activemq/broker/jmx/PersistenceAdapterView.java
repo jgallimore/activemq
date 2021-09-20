@@ -16,7 +16,6 @@
  */
 package org.apache.activemq.broker.jmx;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.activemq.management.TimeStatisticImpl;
 import org.apache.activemq.store.PersistenceAdapter;
 import org.apache.activemq.store.PersistenceAdapterStatistics;

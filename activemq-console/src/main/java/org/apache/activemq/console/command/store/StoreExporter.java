@@ -47,8 +47,6 @@ import org.fusesource.hawtbuf.AsciiBuffer;
 import org.fusesource.hawtbuf.DataByteArrayOutputStream;
 import org.fusesource.hawtbuf.UTF8Buffer;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 /**
  * @author <a href="http://hiramchirino.com">Hiram Chirino</a>
  */
