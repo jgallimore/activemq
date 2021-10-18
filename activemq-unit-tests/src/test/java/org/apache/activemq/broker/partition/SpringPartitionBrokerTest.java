@@ -21,6 +21,7 @@ import org.apache.activemq.broker.BrokerFactory;
 import org.apache.activemq.broker.BrokerService;
 import org.apache.activemq.partition.PartitionBrokerPlugin;
 import org.apache.activemq.partition.dto.Partitioning;
+import org.junit.Assert;
 
 import javax.json.bind.Jsonb;
 import javax.json.bind.JsonbBuilder;
@@ -54,6 +55,12 @@ public class SpringPartitionBrokerTest extends TestCase {
         Partitioning expected = jsonb.fromJson(json, Partitioning.class);
         assertEquals(expected.toString(), config.toString());
 
+        Assert.assertEquals(1, config.getByClientId().get("client1").getIds().size());
+        Assert.assertEquals(2, config.getByClientId().get("client2").getIds().size());
+
+        Assert.assertTrue(config.getByClientId().get("client1").getIds().contains("broker1"));
+        Assert.assertTrue(config.getByClientId().get("client2").getIds().contains("broker1"));
+        Assert.assertTrue(config.getByClientId().get("client2").getIds().contains("broker2"));
     }
 
 }

@@ -22,8 +22,6 @@ import javax.json.bind.Jsonb;
 import javax.json.bind.JsonbBuilder;
 import javax.json.bind.JsonbConfig;
 import javax.json.bind.annotation.JsonbProperty;
-import javax.json.bind.annotation.JsonbTypeDeserializer;
-import java.io.IOException;
 import java.util.HashMap;
 
 /**
@@ -37,7 +35,6 @@ public class Partitioning {
      * to the partition target immediately.
      */
     @JsonbProperty("by_client_id")
-//    @JsonDeserialize(contentAs = Target.class)
     public HashMap<String, Target> byClientId;
 
     /**
@@ -46,7 +43,6 @@ public class Partitioning {
      * to the partition target immediately.
      */
     @JsonbProperty("by_user_name")
-//    @JsonDeserialize(contentAs = Target.class)
     public HashMap<String, Target> byUserName;
 
     /**
@@ -55,7 +51,6 @@ public class Partitioning {
      * to the partition target immediately.
      */
     @JsonbProperty("by_source_ip")
-//    @JsonDeserialize(contentAs = Target.class)
     public HashMap<String, Target> bySourceIp;
 
     /**
@@ -65,7 +60,6 @@ public class Partitioning {
      * will be reconnected to the appropriate target.
      */
     @JsonbProperty("by_queue")
-//    @JsonDeserialize(contentAs = Target.class)
     public HashMap<String, Target> byQueue;
 
     /**
@@ -75,14 +69,12 @@ public class Partitioning {
      * will be reconnected to the appropriate target.
      */
     @JsonbProperty("by_topic")
-//    @JsonDeserialize(contentAs = Target.class)
     public HashMap<String, Target> byTopic;
 
     /**
      * Maps broker names to broker URLs.
      */
     @JsonbProperty("brokers")
-//    @JsonbDeserialize(contentAs = String.class)
     public HashMap<String, String> brokers;
 
 
