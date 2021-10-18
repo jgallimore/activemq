@@ -30,6 +30,8 @@ import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import javax.json.bind.Jsonb;
+import javax.json.bind.JsonbBuilder;
 import javax.management.ObjectName;
 
 import org.apache.activemq.advisory.AdvisorySupport;
@@ -89,7 +91,6 @@ public class DestinationsViewFilter implements Serializable {
 
     Map<ObjectName, DestinationView> destinations;
 
-
     public DestinationsViewFilter() {
     }
 
@@ -98,7 +99,9 @@ public class DestinationsViewFilter implements Serializable {
      *
      */
     public static DestinationsViewFilter create(String json) throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
+        final JsonbBuilder builder = JsonbBuilder.newBuilder();
+        final Jsonb jsonb = builder.build();
+
         if (json == null) {
             return new DestinationsViewFilter();
         }
@@ -106,7 +109,7 @@ public class DestinationsViewFilter implements Serializable {
         if (json.length() == 0 || json.equals("{}")) {
             return new DestinationsViewFilter();
         }
-        return mapper.readerFor(DestinationsViewFilter.class).readValue(json);
+        return jsonb.fromJson(json, DestinationsViewFilter.class);
     }
 
     /**
@@ -127,7 +130,9 @@ public class DestinationsViewFilter implements Serializable {
      * @throws IOException
      */
     String filter(int page, int pageSize) throws IOException {
-        final ObjectMapper mapper = new ObjectMapper();
+        final JsonbBuilder builder = JsonbBuilder.newBuilder();
+        final Jsonb jsonb = builder.build();
+
         final Predicate<DestinationView> predicate = getPredicate();
         final Map<ObjectName, DestinationView> filteredDestinations = new HashMap<>(destinations);
         destinations = filteredDestinations.entrySet().stream().filter(d -> predicate.test(d.getValue())).collect(
@@ -138,7 +143,7 @@ public class DestinationsViewFilter implements Serializable {
         result.put("data", pagedDestinations);
         result.put("count", destinations.size());
         StringWriter writer = new StringWriter();
-        mapper.writeValue(writer, result);
+        jsonb.toJson(result, writer);
         return writer.toString();
     }
 

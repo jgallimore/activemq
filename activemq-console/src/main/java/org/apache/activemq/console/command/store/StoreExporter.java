@@ -47,6 +47,9 @@ import org.fusesource.hawtbuf.AsciiBuffer;
 import org.fusesource.hawtbuf.DataByteArrayOutputStream;
 import org.fusesource.hawtbuf.UTF8Buffer;
 
+import javax.json.bind.Jsonb;
+import javax.json.bind.JsonbBuilder;
+
 /**
  * @author <a href="http://hiramchirino.com">Hiram Chirino</a>
  */
@@ -58,7 +61,6 @@ public class StoreExporter {
     URI config;
     File file;
 
-    private final ObjectMapper mapper = new ObjectMapper();
     private final AsciiBuffer ds_kind = new AsciiBuffer("ds");
     private final AsciiBuffer ptp_kind = new AsciiBuffer("ptp");
     private final AsciiBuffer codec_id = new AsciiBuffer("openwire");
@@ -132,7 +134,11 @@ public class StoreExporter {
                 HashMap<String, Object> jsonMap = new HashMap<String, Object>();
                 jsonMap.put("@class", "queue_destination");
                 jsonMap.put("name", dest.getQueueName());
-                String json = mapper.writeValueAsString(jsonMap);
+
+                final JsonbBuilder builder = JsonbBuilder.newBuilder();
+                final Jsonb jsonb = builder.build();
+
+                String json = jsonb.toJson(jsonMap);
                 System.out.println(json);
                 destRecord.setBindingData(new UTF8Buffer(json));
                 manager.store_queue(destRecord);
@@ -189,7 +195,11 @@ public class StoreExporter {
                         jsonMap.put("selector", sub.getSelector());
                     }
                     jsonMap.put("noLocal", sub.isNoLocal());
-                    String json = mapper.writeValueAsString(jsonMap);
+
+                    final JsonbBuilder builder = JsonbBuilder.newBuilder();
+                    final Jsonb jsonb = builder.build();
+
+                    String json = jsonb.toJson(jsonMap);
                     System.out.println(json);
 
                     destRecord.setBindingData(new UTF8Buffer(json));

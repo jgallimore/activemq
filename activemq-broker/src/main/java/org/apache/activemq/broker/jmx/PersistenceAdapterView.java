@@ -20,14 +20,16 @@ import org.apache.activemq.management.TimeStatisticImpl;
 import org.apache.activemq.store.PersistenceAdapter;
 import org.apache.activemq.store.PersistenceAdapterStatistics;
 
-import java.io.IOException;
+import javax.json.bind.Jsonb;
+import javax.json.bind.JsonbBuilder;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
 public class PersistenceAdapterView implements PersistenceAdapterViewMBean {
 
-    private final static ObjectMapper mapper = new ObjectMapper();
+    private final JsonbBuilder builder = JsonbBuilder.newBuilder();
+    private final Jsonb jsonb = builder.build();
     private final String name;
     private final PersistenceAdapter persistenceAdapter;
 
@@ -90,17 +92,14 @@ public class PersistenceAdapterView implements PersistenceAdapterViewMBean {
 
     private String serializePersistenceAdapterStatistics() {
         if (persistenceAdapterStatistics != null) {
-            try {
-                Map<String, Object> result = new HashMap<String, Object>();
-                result.put("slowCleanupTime", getTimeStatisticAsMap(persistenceAdapterStatistics.getSlowCleanupTime()));
-                result.put("slowWriteTime", getTimeStatisticAsMap(persistenceAdapterStatistics.getSlowWriteTime()));
-                result.put("slowReadTime", getTimeStatisticAsMap(persistenceAdapterStatistics.getSlowReadTime()));
-                result.put("writeTime", getTimeStatisticAsMap(persistenceAdapterStatistics.getWriteTime()));
-                result.put("readTime", getTimeStatisticAsMap(persistenceAdapterStatistics.getReadTime()));
-                return mapper.writeValueAsString(result);
-            } catch (IOException e) {
-                return e.toString();
-            }
+            final Map<String, Object> result = new HashMap<String, Object>();
+            result.put("slowCleanupTime", getTimeStatisticAsMap(persistenceAdapterStatistics.getSlowCleanupTime()));
+            result.put("slowWriteTime", getTimeStatisticAsMap(persistenceAdapterStatistics.getSlowWriteTime()));
+            result.put("slowReadTime", getTimeStatisticAsMap(persistenceAdapterStatistics.getSlowReadTime()));
+            result.put("writeTime", getTimeStatisticAsMap(persistenceAdapterStatistics.getWriteTime()));
+            result.put("readTime", getTimeStatisticAsMap(persistenceAdapterStatistics.getReadTime()));
+
+            jsonb.toJson(result);
         }
 
         return null;

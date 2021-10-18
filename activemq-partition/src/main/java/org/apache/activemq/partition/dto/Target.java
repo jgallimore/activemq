@@ -16,7 +16,10 @@
  */
 package org.apache.activemq.partition.dto;
 
-import java.io.IOException;
+import javax.json.bind.Jsonb;
+import javax.json.bind.JsonbBuilder;
+import javax.json.bind.JsonbConfig;
+import javax.json.bind.annotation.JsonbProperty;
 import java.util.Collection;
 import java.util.HashSet;
 
@@ -26,7 +29,7 @@ import java.util.HashSet;
  */
 public class Target {
 
-    @JsonProperty("ids")
+    @JsonbProperty("ids")
     public HashSet<String> ids = new HashSet<String>();
 
     public Target() {
@@ -39,11 +42,8 @@ public class Target {
 
     @Override
     public String toString() {
-        try {
-            return Partitioning.TO_STRING_MAPPER.writeValueAsString(this);
-        } catch (IOException e) {
-            return super.toString();
-        }
+        final Jsonb jsonb = JsonbBuilder.create(new JsonbConfig().withFormatting(true));
+        return jsonb.toJson(this);
     }
 
     public HashSet<String> getIds() {

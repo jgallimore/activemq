@@ -18,6 +18,11 @@ package org.apache.activemq.partition.dto;
 
 
 
+import javax.json.bind.Jsonb;
+import javax.json.bind.JsonbBuilder;
+import javax.json.bind.JsonbConfig;
+import javax.json.bind.annotation.JsonbProperty;
+import javax.json.bind.annotation.JsonbTypeDeserializer;
 import java.io.IOException;
 import java.util.HashMap;
 
@@ -26,25 +31,13 @@ import java.util.HashMap;
  */
 public class Partitioning {
 
-    static final public ObjectMapper MAPPER = new ObjectMapper();
-    static {
-        MAPPER.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        MAPPER.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-    }
-
-    static final public ObjectMapper TO_STRING_MAPPER = new ObjectMapper();
-    static {
-        TO_STRING_MAPPER.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-        TO_STRING_MAPPER.enable(SerializationFeature.INDENT_OUTPUT);
-    }
-
     /**
      * If a client connects with a clientId which is listed in the
      * map, then he will be immediately reconnected
      * to the partition target immediately.
      */
-    @JsonProperty("by_client_id")
-    @JsonDeserialize(contentAs = Target.class)
+    @JsonbProperty("by_client_id")
+//    @JsonDeserialize(contentAs = Target.class)
     public HashMap<String, Target> byClientId;
 
     /**
@@ -52,8 +45,8 @@ public class Partitioning {
      * map, then he will be immediately reconnected
      * to the partition target immediately.
      */
-    @JsonProperty("by_user_name")
-    @JsonDeserialize(contentAs = Target.class)
+    @JsonbProperty("by_user_name")
+//    @JsonDeserialize(contentAs = Target.class)
     public HashMap<String, Target> byUserName;
 
     /**
@@ -61,8 +54,8 @@ public class Partitioning {
      * map, then he will be immediately reconnected
      * to the partition target immediately.
      */
-    @JsonProperty("by_source_ip")
-    @JsonDeserialize(contentAs = Target.class)
+    @JsonbProperty("by_source_ip")
+//    @JsonDeserialize(contentAs = Target.class)
     public HashMap<String, Target> bySourceIp;
 
     /**
@@ -71,8 +64,8 @@ public class Partitioning {
      * works with a set of targets configured in this map, the client
      * will be reconnected to the appropriate target.
      */
-    @JsonProperty("by_queue")
-    @JsonDeserialize(contentAs = Target.class)
+    @JsonbProperty("by_queue")
+//    @JsonDeserialize(contentAs = Target.class)
     public HashMap<String, Target> byQueue;
 
     /**
@@ -81,25 +74,22 @@ public class Partitioning {
      * works with a set of targets configured in this map, the client
      * will be reconnected to the appropriate target.
      */
-    @JsonProperty("by_topic")
-    @JsonDeserialize(contentAs = Target.class)
+    @JsonbProperty("by_topic")
+//    @JsonDeserialize(contentAs = Target.class)
     public HashMap<String, Target> byTopic;
 
     /**
      * Maps broker names to broker URLs.
      */
-    @JsonProperty("brokers")
-    @JsonDeserialize(contentAs = String.class)
+    @JsonbProperty("brokers")
+//    @JsonbDeserialize(contentAs = String.class)
     public HashMap<String, String> brokers;
 
 
     @Override
     public String toString() {
-        try {
-            return TO_STRING_MAPPER.writeValueAsString(this);
-        } catch (IOException e) {
-            return super.toString();
-        }
+        final Jsonb jsonb = JsonbBuilder.create(new JsonbConfig().withFormatting(true));
+        return jsonb.toJson(this);
     }
 
     public HashMap<String, String> getBrokers() {

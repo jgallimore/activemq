@@ -20,6 +20,9 @@ import org.apache.activemq.broker.Broker;
 import org.apache.activemq.broker.BrokerPlugin;
 import org.apache.activemq.partition.dto.Partitioning;
 
+import javax.json.bind.Jsonb;
+import javax.json.bind.JsonbBuilder;
+import javax.json.bind.JsonbConfig;
 import java.io.IOException;
 
 /**
@@ -54,7 +57,8 @@ public class PartitionBrokerPlugin implements BrokerPlugin {
     }
 
     public void setConfigAsJson(String config) throws IOException {
-        this.config = Partitioning.MAPPER.readValue(config, Partitioning.class);
+        final Jsonb jsonb = JsonbBuilder.create(new JsonbConfig().withFormatting(true));
+        this.config = jsonb.fromJson(config, Partitioning.class);
     }
 
     public String getBrokerURL(PartitionBroker partitionBroker, String id) {

@@ -25,6 +25,10 @@ import org.linkedin.util.clock.Timespan;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.json.bind.Jsonb;
+import javax.json.bind.JsonbBuilder;
+import javax.json.bind.JsonbConfig;
+import java.nio.charset.StandardCharsets;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -115,7 +119,8 @@ public class ZooKeeperPartitionBroker extends PartitionBroker {
         }
 
         try {
-            config = Partitioning.MAPPER.readValue(data, Partitioning.class);
+            final Jsonb jsonb = JsonbBuilder.create(new JsonbConfig().withFormatting(true));
+            config = jsonb.fromJson(new String(data, StandardCharsets.UTF_8), Partitioning.class);
         } catch (Exception e) {
             LOG.warn("Invalid partitioning configuration: " + e, e);
         }

@@ -618,6 +618,24 @@
         </exclusions>
       </dependency>
 
+
+      <!-- JSON-B -->
+      <dependency>
+        <groupId>io.devcon5</groupId>
+        <artifactId>jackson-jsonb-provider</artifactId>
+        <version>1.2-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>javax.json</groupId>
+        <artifactId>javax.json-api</artifactId>
+        <version>1.0</version>
+      </dependency>
+      <dependency>
+        <groupId>javax.json.bind</groupId>
+        <artifactId>javax.json.bind-api</artifactId>
+        <version>1.0</version>
+      </dependency>
+
       <!-- Jackson -->
       <dependency>
         <groupId>com.fasterxml.jackson.core</groupId>

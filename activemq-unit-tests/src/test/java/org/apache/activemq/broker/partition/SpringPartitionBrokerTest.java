@@ -22,6 +22,10 @@ import org.apache.activemq.broker.BrokerService;
 import org.apache.activemq.partition.PartitionBrokerPlugin;
 import org.apache.activemq.partition.dto.Partitioning;
 
+import javax.json.bind.Jsonb;
+import javax.json.bind.JsonbBuilder;
+import javax.json.bind.JsonbConfig;
+
 /**
  */
 public class SpringPartitionBrokerTest extends TestCase {
@@ -45,7 +49,9 @@ public class SpringPartitionBrokerTest extends TestCase {
         "    \"broker2\":\"tcp://localhost:61616\"\n" +
         "  }\n" +
         "}";
-        Partitioning expected = Partitioning.MAPPER.readValue(json, Partitioning.class);
+
+        final Jsonb jsonb = JsonbBuilder.create(new JsonbConfig().withFormatting(true));
+        Partitioning expected = jsonb.fromJson(json, Partitioning.class);
         assertEquals(expected.toString(), config.toString());
 
     }
