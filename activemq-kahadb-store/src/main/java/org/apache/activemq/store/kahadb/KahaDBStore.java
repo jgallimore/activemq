@@ -114,13 +114,15 @@ public class KahaDBStore extends MessageDatabase implements PersistenceAdapter, 
             PROPERTY_ASYNC_EXECUTOR_MAX_THREADS, "1"), 10);
     ;
 
-    protected ExecutorService queueExecutor;
+//    protected ExecutorService queueExecutor;
+    protected Thread queueExecutorThread;
     protected ExecutorService topicExecutor;
     protected final List<Map<AsyncJobKey, StoreTask>> asyncQueueMaps = new LinkedList<Map<AsyncJobKey, StoreTask>>();
     protected final List<Map<AsyncJobKey, StoreTask>> asyncTopicMaps = new LinkedList<Map<AsyncJobKey, StoreTask>>();
     final WireFormat wireFormat = new OpenWireFormat();
     private SystemUsage usageManager;
     private LinkedBlockingQueue<Runnable> asyncQueueJobQueue;
+    private AtomicBoolean asyncQueueJobQueueCancelled = new AtomicBoolean(false);
     private LinkedBlockingQueue<Runnable> asyncTopicJobQueue;
     Semaphore globalQueueSemaphore;
     Semaphore globalTopicSemaphore;
@@ -258,15 +260,32 @@ public class KahaDBStore extends MessageDatabase implements PersistenceAdapter, 
         this.globalTopicSemaphore = new Semaphore(getMaxAsyncJobs());
         this.asyncQueueJobQueue = new LinkedBlockingQueue<Runnable>(getMaxAsyncJobs());
         this.asyncTopicJobQueue = new LinkedBlockingQueue<Runnable>(getMaxAsyncJobs());
-        this.queueExecutor = new StoreTaskExecutor(1, asyncExecutorMaxThreads, 0L, TimeUnit.MILLISECONDS,
-                asyncQueueJobQueue, new ThreadFactory() {
-            @Override
-            public Thread newThread(Runnable runnable) {
-                Thread thread = new Thread(runnable, "ConcurrentQueueStoreAndDispatch");
-                thread.setDaemon(true);
-                return thread;
+//        this.queueExecutor = new StoreTaskExecutor(1, asyncExecutorMaxThreads, 0L, TimeUnit.MILLISECONDS,
+//                asyncQueueJobQueue, new ThreadFactory() {
+//            @Override
+//            public Thread newThread(Runnable runnable) {
+//                Thread thread = new Thread(runnable, "ConcurrentQueueStoreAndDispatch");
+//                thread.setDaemon(true);
+//                return thread;
+//            }
+//        });
+
+        this.queueExecutorThread = new Thread(() -> {
+            while (!asyncQueueJobQueueCancelled.get()) {
+                try {
+                    final Runnable runnable = asyncQueueJobQueue.take();
+                    runnable.run();
+
+                    if (runnable instanceof StoreTask) {
+                        ((StoreTask) runnable).releaseLocks();
+                    }
+                } catch (InterruptedException e) {
+                    // ignore
+                }
             }
         });
+        this.queueExecutorThread.start();
+
         this.topicExecutor = new StoreTaskExecutor(1, asyncExecutorMaxThreads, 0L, TimeUnit.MILLISECONDS,
                 asyncTopicJobQueue, new ThreadFactory() {
             @Override
@@ -321,9 +340,8 @@ public class KahaDBStore extends MessageDatabase implements PersistenceAdapter, 
         if (this.globalTopicSemaphore != null) {
             this.globalTopicSemaphore.drainPermits();
         }
-        if (this.queueExecutor != null) {
-            ThreadPoolUtils.shutdownNow(queueExecutor);
-            queueExecutor = null;
+        if (this.queueExecutorThread != null) {
+            asyncQueueJobQueueCancelled.set(true);
         }
         if (this.topicExecutor != null) {
             ThreadPoolUtils.shutdownNow(topicExecutor);
@@ -374,7 +392,7 @@ public class KahaDBStore extends MessageDatabase implements PersistenceAdapter, 
     protected void addQueueTask(KahaDBMessageStore store, StoreQueueTask task) throws IOException {
         store.asyncTaskMap.put(new AsyncJobKey(task.getMessage().getMessageId(), store.getDestination()), task);
         queueSizeStats.add(store.asyncTaskMap.size());
-        this.queueExecutor.execute(task);
+        this.asyncQueueJobQueue.offer(task);
     }
 
     protected StoreTopicTask removeTopicTask(KahaDBTopicMessageStore store, MessageId id) {
