@@ -1160,15 +1160,13 @@ public abstract class MessageDatabase extends ServiceSupport implements BrokerSe
                     lastAsyncJournalUpdate.set(location);
                 }
 
-                LOG.info("Starting to append " + data.getClass().getName() + " command to journal");
                 process(data, location, before);
-                LOG.info("Finished appending " + data.getClass().getName() + " command to journal");
 
                 long end = System.currentTimeMillis();
                 long totalTimeMillis = end - start;
                 if (LOG_SLOW_ACCESS_TIME > 0 && totalTimeMillis > LOG_SLOW_ACCESS_TIME) {
                     if (LOG.isInfoEnabled()) {
-                        LOG.info("Slow KahaDB access: Journal append took: "+(start2-start)+" ms, Index update took "+(end-start2)+" ms");
+                        LOG.info("Slow KahaDB access: Journal append took: "+(start2-start)+" ms, Index update took "+(end-start2)+" ms. Location: " + location);
                     }
                     persistenceAdapterStatistics.addSlowWriteTime(totalTimeMillis);
                 }
