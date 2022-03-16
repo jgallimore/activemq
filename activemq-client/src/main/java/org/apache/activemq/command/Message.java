@@ -62,6 +62,7 @@ public abstract class Message extends BaseCommand implements MarshallAware, Mess
     protected ActiveMQDestination destination;
     protected TransactionId transactionId;
 
+    protected long deliveryTime;
     protected long expiration;
     protected long timestamp;
     protected long arrival;
@@ -110,14 +111,6 @@ public abstract class Message extends BaseCommand implements MarshallAware, Mess
     public abstract void storeContent();
     public abstract void storeContentAndClear();
 
-    /**
-     * @deprecated - This method name is misnamed
-     * @throws JMSException
-     */
-    public void clearMarshalledState() throws JMSException {
-        clearUnMarshalledState();
-    }
-
     // useful to reduce the memory footprint of a persisted message
     public void clearUnMarshalledState() throws JMSException {
         properties = null;
@@ -143,6 +136,7 @@ public abstract class Message extends BaseCommand implements MarshallAware, Mess
         copy.messageId = messageId != null ? messageId.copy() : null;
         copy.originalDestination = originalDestination;
         copy.originalTransactionId = originalTransactionId;
+        copy.deliveryTime = deliveryTime;
         copy.expiration = expiration;
         copy.timestamp = timestamp;
         copy.correlationId = correlationId;

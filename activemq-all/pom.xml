@@ -14,7 +14,7 @@
   <parent>
     <groupId>org.apache.activemq</groupId>
     <artifactId>activemq-parent</artifactId>
-    <version>5.17.0-SNAPSHOT</version>
+    <version>5.18.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>activemq-all</artifactId>
@@ -57,15 +57,11 @@
     </dependency>
     <dependency>
       <groupId>org.apache.geronimo.specs</groupId>
-      <artifactId>geronimo-annotation_1.0_spec</artifactId>
+      <artifactId>geronimo-annotation_1.3_spec</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>jcl-over-slf4j</artifactId>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-slf4j-impl</artifactId>
     </dependency>
   </dependencies>
 
@@ -104,14 +100,13 @@
                   <include>org.apache.activemq.protobuf:activemq-protobuf</include>
                   <include>org.fusesource.hawtbuf:hawtbuf</include>
                   <include>org.jasypt:jasypt</include>
-                  <include>org.apache.geronimo.specs:geronimo-jms_1.1_spec</include>
+                  <include>jakarta.jms:jakarta.jms-api</include>
                   <include>org.apache.geronimo.specs:geronimo-jta_1.1_spec</include>
                   <include>org.apache.geronimo.specs:geronimo-j2ee-management_1.1_spec</include>
-                  <include>org.apache.geronimo.specs:geronimo-annotation_1.0_spec</include>
+                  <include>org.apache.geronimo.specs:geronimo-annotation_1.3_spec</include>
                   <include>org.slf4j:slf4j-api</include>
-                  <include>org.slf4j:slf4j-log4j12</include>
+                  <include>org.apache.logging.log4j:log4j-slf4j-impl</include>
                   <include>org.slf4j:jcl-over-slf4j</include>
-                  <include>log4j:log4j</include>
                   <include>org.springframework:spring-core</include>
                   <include>org.springframework:spring-beans</include>
                   <include>org.springframework:spring-context</include>
@@ -319,9 +314,9 @@
           <optional>true</optional>
         </dependency>
         <dependency>
-          <groupId>org.apache.geronimo.specs</groupId>
-          <artifactId>geronimo-jms_1.1_spec</artifactId>
-          <version>1.1.1</version>
+          <groupId>jakarta.jms</groupId>
+          <artifactId>jakarta.jms-api</artifactId>
+          <version>2.0.3</version>
           <classifier>sources</classifier>
           <optional>true</optional>
         </dependency>
@@ -334,8 +329,8 @@
         </dependency>
         <dependency>
           <groupId>org.apache.geronimo.specs</groupId>
-          <artifactId>geronimo-annotation_1.0_spec</artifactId>
-          <version>1.1.1</version>
+          <artifactId>geronimo-annotation_1.3_spec</artifactId>
+          <version>1.0</version>
           <classifier>sources</classifier>
           <optional>true</optional>
         </dependency>
@@ -347,15 +342,15 @@
           <optional>true</optional>
         </dependency>
         <dependency>
-          <groupId>org.slf4j</groupId>
-          <artifactId>slf4j-log4j12</artifactId>
-          <version>${slf4j-version}</version>
+          <groupId>org.apache.logging.log4j</groupId>
+          <artifactId>log4j-slf4j-impl</artifactId>
+          <version>${log4j-version}</version>
           <classifier>sources</classifier>
           <optional>true</optional>
         </dependency>
         <dependency>
-          <groupId>log4j</groupId>
-          <artifactId>log4j</artifactId>
+          <groupId>org.apache.logging.log4j</groupId>
+          <artifactId>log4j-api</artifactId>
           <version>${log4j-version}</version>
           <classifier>sources</classifier>
           <optional>true</optional>

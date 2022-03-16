@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.apache.activemq</groupId>
     <artifactId>activemq-parent</artifactId>
-    <version>5.17.0-SNAPSHOT</version>
+    <version>5.18.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>activemq-web-console</artifactId>
@@ -159,12 +159,13 @@
               org.apache.commons.logging;version="[1.1,2)";resolution:=optional,
               org.slf4j;version="[1.6,2)";resolution:=optional,
               org.slf4j.spi;version="[1.6,2)";resolution:=optional,
-              org.apache.log4j;version="[1.2.14,2)";resolution:=optional,
-              org.apache.log4j.spi;version="[1.2.14,2)";resolution:=optional,
+              org.apache.log4j;version="[2,3)";resolution:=optional,
+              org.apache.log4j.spi;version="[2,3)";resolution:=optional,
               org.eclipse.jetty*;resolution:=optional;version="[9.0,10)",
               org.objectweb.asm*;version="[6,8)"
             </Import-Package>
             <_contract>!*</_contract>
+            <_noee>true</_noee>
           </instructions>
         </configuration>
       </plugin>
@@ -185,8 +186,8 @@
       
     <!-- j2ee jars -->
     <dependency>
-      <groupId>org.apache.geronimo.specs</groupId>
-      <artifactId>geronimo-jms_1.1_spec</artifactId>
+      <groupId>jakarta.jms</groupId>
+      <artifactId>jakarta.jms-api</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.geronimo.specs</groupId>
@@ -247,9 +248,8 @@
 
     <!-- web container -->
     <dependency>
-      <groupId>org.eclipse.jetty.aggregate</groupId>
-      <artifactId>jetty-all</artifactId>
-      <classifier>uber</classifier>
+      <groupId>org.eclipse.jetty</groupId>
+      <artifactId>jetty-server</artifactId>
       <scope>test</scope>
     </dependency>
      <dependency>
@@ -263,12 +263,12 @@
       <artifactId>slf4j-api</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-slf4j-impl</artifactId>
     </dependency>
     <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
     </dependency>
 
     <!-- JSTL support -->
@@ -325,7 +325,7 @@
     
      <dependency>
        <groupId>org.apache.geronimo.specs</groupId>
-       <artifactId>geronimo-annotation_1.0_spec</artifactId>
+       <artifactId>geronimo-annotation_1.3_spec</artifactId>
     </dependency>
 
 	<dependency>

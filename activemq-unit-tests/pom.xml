@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.apache.activemq</groupId>
     <artifactId>activemq-parent</artifactId>
-    <version>5.17.0-SNAPSHOT</version>
+    <version>5.18.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>activemq-unit-tests</artifactId>
@@ -67,8 +67,8 @@
       <artifactId>activemq-runtime-config</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.geronimo.specs</groupId>
-      <artifactId>geronimo-jms_1.1_spec</artifactId>
+      <groupId>jakarta.jms</groupId>
+      <artifactId>jakarta.jms-api</artifactId>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
@@ -113,7 +113,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.geronimo.specs</groupId>
-      <artifactId>geronimo-annotation_1.0_spec</artifactId>
+      <artifactId>geronimo-annotation_1.3_spec</artifactId>
       <optional>true</optional>
     </dependency>
     <dependency>
@@ -143,13 +143,14 @@
       <optional>true</optional>
     </dependency>
     <dependency>
-      <groupId>xalan</groupId>
-      <artifactId>xalan</artifactId>
+      <groupId>org.apache.derby</groupId>
+      <artifactId>derbytools</artifactId>
       <optional>true</optional>
     </dependency>
     <dependency>
-      <groupId>commons-net</groupId>
-      <artifactId>commons-net</artifactId>
+      <groupId>xalan</groupId>
+      <artifactId>xalan</artifactId>
+      <optional>true</optional>
     </dependency>
 
     <!-- =============================== -->
@@ -183,13 +184,18 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-api</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-slf4j-impl</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -259,9 +265,8 @@
     </dependency>
     <dependency>
       <!-- using it for Jetty's JNDI context to work /w Joram tests. -->
-      <groupId>org.eclipse.jetty.aggregate</groupId>
-      <artifactId>jetty-all</artifactId>
-      <classifier>uber</classifier>
+      <groupId>org.eclipse.jetty</groupId>
+      <artifactId>jetty-jndi</artifactId>
       <scope>test</scope>
     </dependency>
 
@@ -277,6 +282,12 @@
       <artifactId>apacheds-server-integ</artifactId>
       <version>${directory-version}</version>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>log4j</groupId>
+          <artifactId>log4j</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.jmock</groupId>
@@ -292,12 +303,6 @@
       <groupId>org.easymock</groupId>
       <artifactId>easymock</artifactId>
       <version>3.2</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.ftpserver</groupId>
-      <artifactId>ftpserver-core</artifactId>
-      <version>${ftpserver-version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -594,9 +599,9 @@
     <profile>
       <id>activemq.exclude-broken-tests</id>
       <activation>
-        <activeByDefault>true</activeByDefault>
         <property>
           <name>activemq.tests</name>
+          <value>excludeBroken</value>
         </property>
       </activation>
       <build>
@@ -653,6 +658,10 @@
       <id>activemq.tests-quick</id>
       <activation>
         <activeByDefault>true</activeByDefault>
+        <property>
+          <name>activemq.tests</name>
+          <value>quick</value>
+        </property>
       </activation>
       <build>
         <plugins>
@@ -738,6 +747,8 @@
                 <exclude>org/apache/activemq/broker/region/cursors/NegativeQueueTest.*</exclude>
                 <exclude>org/apache/activemq/broker/region/cursors/StoreBasedCursorTest.*</exclude>
                 <exclude>org/apache/activemq/broker/region/cursors/StoreQueueCursorJDBCNoDuplicateTest.*</exclude>
+                <exclude>org/apache/activemq/broker/region/QueuePurgeTest.*</exclude>
+                <exclude>org/apache/activemq/broker/scheduler/JmsSchedulerTest.*</exclude>
                 <exclude>org/apache/activemq/broker/scheduler/JmsCronSchedulerTest.*</exclude>
                 <exclude>org/apache/activemq/broker/scheduler/JmsSchedulerTest.*</exclude>
                 <exclude>org/apache/activemq/broker/scheduler/JobSchedulerManagementTest.*</exclude>
@@ -1063,6 +1074,11 @@
                 <exclude>org/apache/activemq/store/kahadb/disk/util/DataByteArrayInputStreamTest.*</exclude>
                 <exclude>org/apache/activemq/bugs/AMQ5266StarvedConsumerTest.*</exclude>
                 <exclude>org/apache/activemq/bugs/AMQ5266Test.*</exclude>
+
+                <!--Broken tests -->
+                <exclude>**/NetworkFailoverTest.*/**</exclude>
+                <!-- This test only works on machines which have ssh properly configured -->
+                <exclude>**/SSHTunnelNetworkReconnectTest.*</exclude>
               </excludes>
             </configuration>
           </plugin>

@@ -35,6 +35,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 import javax.jms.Connection;
 import javax.jms.ConnectionConsumer;
@@ -192,6 +193,7 @@ public class ActiveMQConnection implements Connection, TopicConnection, QueueCon
     // Assume that protocol is the latest. Change to the actual protocol
     // version when a WireFormatInfo is received.
     private final AtomicInteger protocolVersion = new AtomicInteger(CommandTypes.PROTOCOL_VERSION);
+    private final AtomicLong maxFrameSize = new AtomicLong(Long.MAX_VALUE);
     private final long timeCreated;
     private final ConnectionAudit connectionAudit = new ConnectionAudit();
     private DestinationSource destinationSource;
@@ -302,6 +304,44 @@ public class ActiveMQConnection implements Connection, TopicConnection, QueueCon
      */
     public JMSConnectionStatsImpl getConnectionStats() {
         return stats;
+    }
+
+    /**
+     * Creates a <CODE>Session</CODE> object.
+     *
+     * @throws JMSException if the <CODE>Connection</CODE> object fails to
+     *                 create a session due to some internal error or lack of
+     *                 support for the specific transaction and acknowledgement
+     *                 mode.
+     * @since 2.0
+     */
+    @Override
+    public Session createSession() throws JMSException {
+         throw new UnsupportedOperationException("createSession() is unsupported");
+    }
+
+    /**
+     * Creates a <CODE>Session</CODE> object.
+     *
+     * @param acknowledgeMode indicates whether the consumer or the client will
+     *                acknowledge any messages it receives; ignored if the
+     *                session is transacted. Legal values are
+     *                <code>Session.AUTO_ACKNOWLEDGE</code>,
+     *                <code>Session.CLIENT_ACKNOWLEDGE</code>, and
+     *                <code>Session.DUPS_OK_ACKNOWLEDGE</code>.
+     * @return a newly created session
+     * @throws JMSException if the <CODE>Connection</CODE> object fails to
+     *                 create a session due to some internal error or lack of
+     *                 support for the specific transaction and acknowledgement
+     *                 mode.
+     * @see Session#AUTO_ACKNOWLEDGE
+     * @see Session#CLIENT_ACKNOWLEDGE
+     * @see Session#DUPS_OK_ACKNOWLEDGE
+     * @since 2.0
+     */
+    @Override
+    public Session createSession(int sessionMode) throws JMSException {
+        throw new UnsupportedOperationException("createSession(int sessionMode) is unsupported");
     }
 
     /**
@@ -826,10 +866,32 @@ public class ActiveMQConnection implements Connection, TopicConnection, QueueCon
         return new ActiveMQConnectionConsumer(this, sessionPool, info);
     }
 
-    // Properties
-    // -------------------------------------------------------------------------
+    /**
+     * 
+     * @see javax.jms.ConnectionConsumer
+     * @since 2.0
+     */
+    @Override
+    public ConnectionConsumer createSharedConnectionConsumer(Topic topic, String subscriptionName, String messageSelector, ServerSessionPool sessionPool,
+                                                             int maxMessages) throws JMSException {
+        throw new UnsupportedOperationException("createSharedConnectionConsumer() is not supported");
+    }
 
     /**
+     * 
+     * @see javax.jms.ConnectionConsumer
+     * @since 2.0
+     */
+    @Override
+    public ConnectionConsumer createSharedDurableConnectionConsumer(Topic topic, String subscriptionName, String messageSelector, ServerSessionPool sessionPool,
+                                                                    int maxMessages) throws JMSException {
+        throw new UnsupportedOperationException("createSharedConnectionConsumer() is not supported");
+    }
+    
+    // Properties
+    // -------------------------------------------------------------------------
+  
+	/**
      * Returns true if this connection has been started
      *
      * @return true if this Connection is started
@@ -1386,7 +1448,6 @@ public class ActiveMQConnection implements Connection, TopicConnection, QueueCon
         if (isClosed()) {
             throw new ConnectionClosedException();
         } else {
-
             try {
                 Response response = (Response)(timeout > 0
                         ? this.transport.request(command, timeout)
@@ -1920,6 +1981,17 @@ public class ActiveMQConnection implements Connection, TopicConnection, QueueCon
 
     protected void onWireFormatInfo(WireFormatInfo info) {
         protocolVersion.set(info.getVersion());
+
+        long tmpMaxFrameSize = 0;
+        try {
+            tmpMaxFrameSize = info.getMaxFrameSize();
+        } catch (IOException e) {
+            // unmarshal error on property map
+        }
+
+        if(tmpMaxFrameSize > 0) {
+            maxFrameSize.set(tmpMaxFrameSize);
+        }
     }
 
     /**

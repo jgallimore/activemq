@@ -21,7 +21,7 @@
   <parent>
     <groupId>org.apache.activemq.tooling</groupId>
     <artifactId>activemq-tooling</artifactId>
-    <version>5.17.0-SNAPSHOT</version>
+    <version>5.18.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>activemq-perf-maven-plugin</artifactId>
@@ -59,8 +59,8 @@
       <artifactId>derbynet</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.geronimo.specs</groupId>
-      <artifactId>geronimo-jms_1.1_spec</artifactId>
+      <groupId>jakarta.jms</groupId>
+      <artifactId>jakarta.jms-api</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.geronimo.specs</groupId>
@@ -76,10 +76,5 @@
       <artifactId>slf4j-simple</artifactId>
       <version>${slf4j-version}</version>
     </dependency>
-    <!-- dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
-    </dependency -->
-
   </dependencies>
 </project>

@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.apache.activemq</groupId>
     <artifactId>activemq-parent</artifactId>
-    <version>5.17.0-SNAPSHOT</version>
+    <version>5.18.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>activemq-pool</artifactId>
@@ -58,7 +58,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.geronimo.specs</groupId>
-      <artifactId>geronimo-annotation_1.0_spec</artifactId>
+      <artifactId>geronimo-annotation_1.3_spec</artifactId>
       <optional>true</optional>
     </dependency>
     <dependency>
@@ -82,13 +82,13 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-slf4j-impl</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -131,7 +131,7 @@
         <inherited>true</inherited>
         <configuration>
           <instructions>
-            <Export-Package>*</Export-Package>
+            <Export-Package>org.apache.activemq.pool*;version=${project.version};-noimport:=true</Export-Package>
             <Import-Package>
               javax.transaction*;resolution:=optional,
               org.apache.activemq.jms.pool*;resolution:=optional,
@@ -139,6 +139,7 @@
               org.apache.geronimo.transaction.manager*;resolution:=optional,
               *
             </Import-Package>
+            <_noee>true</_noee>
           </instructions>
         </configuration>
       </plugin>

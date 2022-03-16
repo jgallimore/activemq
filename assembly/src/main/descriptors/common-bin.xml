@@ -142,7 +142,7 @@
         <include>${pom.groupId}:activemq-jaas</include>
         <include>org.apache.activemq.protobuf:activemq-protobuf</include>
         <include>org.apache.geronimo.specs:geronimo-j2ee-management_1.1_spec</include>
-        <include>org.apache.geronimo.specs:geronimo-jms_1.1_spec</include>
+        <include>jakarta.jms:jakarta.jms-api</include>
         <include>org.apache.geronimo.specs:geronimo-jta_1.1_spec</include>
         <include>${pom.groupId}:activemq-web</include>
         <include>org.fusesource.hawtbuf:hawtbuf</include>
@@ -192,10 +192,10 @@
         <include>org.apache.commons:commons-dbcp2</include>
         <include>org.apache.commons:commons-pool2</include>
         <include>commons-codec:commons-codec</include>
-        <include>commons-net:commons-net</include>
         <include>org.apache.commons:commons-lang3</include>
-        <include>org.slf4j:slf4j-log4j12</include>
-        <include>log4j:log4j</include>
+        <include>org.apache.logging.log4j:log4j-slf4j-impl</include>
+        <include>org.apache.logging.log4j:log4j-api</include>
+        <include>org.apache.logging.log4j:log4j-core</include>
         <include>org.apache.geronimo.specs:geronimo-j2ee-connector_1.5_spec</include>
         <include>org.apache.httpcomponents:httpclient</include>
         <include>org.apache.httpcomponents:httpcore</include>
@@ -223,11 +223,6 @@
         <!-- Apache Shiro dependencies: -->
         <include>org.apache.shiro:shiro-core</include>
         <include>org.apache.shiro:shiro-spring</include>
-
-        <!-- insight log -->
-        <include>io.fabric8.insight:insight-log-core</include>
-        <include>io.fabric8.insight:insight-log4j</include>
-
       </includes>
       <fileMode>0644</fileMode>
       <directoryMode>0755</directoryMode>
@@ -254,7 +249,21 @@
       <includes>
         <include>org.springframework:spring-web</include>
         <include>org.springframework:spring-webmvc</include>
-        <include>org.eclipse.jetty.aggregate:jetty-all</include>
+        <include>org.eclipse.jetty:jetty-annotations</include>
+        <include>org.eclipse.jetty:jetty-server</include>
+        <include>org.eclipse.jetty:jetty-xml</include>
+        <include>org.eclipse.jetty:jetty-webapp</include>
+        <include>org.eclipse.jetty:jetty-util</include>
+        <include>org.eclipse.jetty:jetty-http</include>
+        <include>org.eclipse.jetty:jetty-io</include>
+        <include>org.eclipse.jetty:jetty-plus</include>
+        <include>org.eclipse.jetty:jetty-servlet</include>
+        <include>org.eclipse.jetty:jetty-security</include>
+        <include>org.eclipse.jetty:jetty-rewrite</include>
+        <include>org.eclipse.jetty.websocket:websocket-api</include>
+        <include>org.eclipse.jetty.websocket:websocket-common</include>
+        <include>org.eclipse.jetty.websocket:websocket-server</include>
+        <include>org.eclipse.jetty.websocket:websocket-servlet</include>
         <include>org.eclipse.jetty.orbit:javax.security.auth.message</include>
         <include>org.apache.tomcat:tomcat-servlet-api</include>
         <include>org.apache.tomcat:tomcat-websocket-api</include>
@@ -271,7 +280,7 @@
         <include>org.mortbay.jasper:apache-el</include>
         <include>org.apache.taglibs:taglibs-standard-impl</include>
 
-        <include>org.apache.geronimo.specs:geronimo-annotation_1.0_spec</include>
+        <include>org.apache.geronimo.specs:geronimo-annotation_1.3_spec</include>
         <include>org.ow2.asm:asm</include>
         <include>org.eclipse.jdt:ecj</include>
 

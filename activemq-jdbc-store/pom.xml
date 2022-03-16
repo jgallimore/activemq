@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.apache.activemq</groupId>
     <artifactId>activemq-parent</artifactId>
-    <version>5.17.0-SNAPSHOT</version>
+    <version>5.18.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>activemq-jdbc-store</artifactId>
@@ -46,6 +46,11 @@
     <dependency>
       <groupId>org.apache.derby</groupId>
       <artifactId>derby</artifactId>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.derby</groupId>
+      <artifactId>derbytools</artifactId>
       <optional>true</optional>
     </dependency>
     <dependency>
@@ -74,8 +79,8 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-slf4j-impl</artifactId>
       <scope>test</scope>
     </dependency>
 
@@ -109,7 +114,7 @@
               <name>org.apache.activemq.default.directory.prefix</name>
               <value>target/</value>
             </property>
-            <!-- Uncomment the following if you want to configure custom logging (using src/test/resources/log4j.properties)
+            <!-- Uncomment the following if you want to configure custom logging (using src/test/resources/log4j2-test.properties)
                  while running mvn:test
                  Note: if you want to see log messages on the console window remove
                        "redirectTestOutputToFile" from the parent pom
@@ -117,7 +122,7 @@
             <!--
             <property>
               <name>log4j.configuration</name>
-              <value>file:target/test-classes/log4j.properties</value>
+              <value>file:target/test-classes/log4j2-test.properties</value>
             </property>
             -->
           </systemProperties>

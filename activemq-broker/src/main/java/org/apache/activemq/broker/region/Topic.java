@@ -540,7 +540,7 @@ public class Topic extends BaseDestination implements Task {
 
         message.incrementReferenceCount();
 
-        if (context.isInTransaction()) {
+        if (context.isInTransaction() && (context.getTransaction() != null)) {
             context.getTransaction().addSynchronization(new Synchronization() {
                 @Override
                 public void afterCommit() throws Exception {
@@ -654,7 +654,7 @@ public class Topic extends BaseDestination implements Task {
         return result.toArray(new Message[result.size()]);
     }
 
-    private void doBrowse(final List<Message> browseList, final int max) {
+    public void doBrowse(final List<Message> browseList, final int max) {
         try {
             if (topicStore != null) {
                 final List<Message> toExpire = new ArrayList<Message>();
