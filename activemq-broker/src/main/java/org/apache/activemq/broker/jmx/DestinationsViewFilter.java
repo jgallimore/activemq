@@ -20,8 +20,9 @@ import static org.apache.activemq.util.IntrospectionSupport.findGetterMethod;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.io.StringWriter;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -31,13 +32,16 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import javax.management.ObjectName;
+import javax.ws.rs.core.MediaType;
 
 import org.apache.activemq.advisory.AdvisorySupport;
 import org.apache.activemq.command.ActiveMQTopic;
+import org.apache.activemq.json.MessageBodyReaderFactory;
+import org.apache.activemq.json.MessageBodyWriterFactory;
+import org.apache.activemq.util.ByteArrayInputStream;
+import org.apache.activemq.util.ByteArrayOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Defines a query API for destinations MBeans
@@ -100,7 +104,6 @@ public class DestinationsViewFilter implements Serializable {
      *
      */
     public static DestinationsViewFilter create(String json) throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
         if (json == null) {
             return new DestinationsViewFilter();
         }
@@ -108,7 +111,16 @@ public class DestinationsViewFilter implements Serializable {
         if (json.length() == 0 || json.equals("{}")) {
             return new DestinationsViewFilter();
         }
-        return mapper.readerFor(DestinationsViewFilter.class).readValue(json);
+
+        return MessageBodyReaderFactory.get(DestinationsViewFilter.class)
+            .readFrom(
+                    DestinationsViewFilter.class,
+                    null,
+                    new Annotation[0],
+                    MediaType.APPLICATION_JSON_TYPE,
+                    null,
+                    new ByteArrayInputStream(json.getBytes(Charset.defaultCharset()))
+            );
     }
 
     /**
@@ -129,7 +141,6 @@ public class DestinationsViewFilter implements Serializable {
      * @throws IOException
      */
     String filter(int page, int pageSize) throws IOException {
-        final ObjectMapper mapper = new ObjectMapper();
         final Predicate<DestinationView> predicate = getPredicate();
         final Map<ObjectName, DestinationView> filteredDestinations = new HashMap<>(destinations);
         destinations = filteredDestinations.entrySet().stream().filter(d -> predicate.test(d.getValue())).collect(
@@ -139,9 +150,21 @@ public class DestinationsViewFilter implements Serializable {
         Map<String, Object> result = new HashMap<String, Object>();
         result.put("data", pagedDestinations);
         result.put("count", destinations.size());
-        StringWriter writer = new StringWriter();
-        mapper.writeValue(writer, result);
-        return writer.toString();
+
+        final ByteArrayOutputStream os = new ByteArrayOutputStream();
+
+        MessageBodyWriterFactory.get(Map.class)
+            .writeTo(
+                result,
+                Map.class,
+                null,
+                new Annotation[0],
+                MediaType.APPLICATION_JSON_TYPE,
+                null,
+                os
+            );
+
+        return new String(os.toByteArray(), Charset.defaultCharset());
     }
 
     Map<ObjectName, DestinationView> getPagedDestinations(int page, int pageSize) {
