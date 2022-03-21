@@ -16,6 +16,10 @@
  */
 package org.apache.activemq.broker.partition;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import junit.framework.TestCase;
 import org.apache.activemq.broker.BrokerFactory;
 import org.apache.activemq.broker.BrokerService;
@@ -45,7 +49,14 @@ public class SpringPartitionBrokerTest extends TestCase {
         "    \"broker2\":\"tcp://localhost:61616\"\n" +
         "  }\n" +
         "}";
-        Partitioning expected = Partitioning.MAPPER.readValue(json, Partitioning.class);
+
+
+        final ObjectMapper mapper = new ObjectMapper();
+        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+        mapper.enable(SerializationFeature.INDENT_OUTPUT);
+
+        Partitioning expected = mapper.readValue(json, Partitioning.class);
         assertEquals(expected.toString(), config.toString());
 
     }
