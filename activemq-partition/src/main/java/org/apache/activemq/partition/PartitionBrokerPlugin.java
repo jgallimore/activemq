@@ -18,9 +18,14 @@ package org.apache.activemq.partition;
 
 import org.apache.activemq.broker.Broker;
 import org.apache.activemq.broker.BrokerPlugin;
+import org.apache.activemq.json.MessageBodyReaderFactory;
 import org.apache.activemq.partition.dto.Partitioning;
 
+import javax.ws.rs.core.MediaType;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.lang.annotation.Annotation;
+import java.nio.charset.Charset;
 
 /**
  * A BrokerPlugin which partitions client connections over a cluster of brokers.
@@ -54,7 +59,8 @@ public class PartitionBrokerPlugin implements BrokerPlugin {
     }
 
     public void setConfigAsJson(String config) throws IOException {
-        this.config = Partitioning.MAPPER.readValue(config, Partitioning.class);
+        final ByteArrayInputStream is = new ByteArrayInputStream(config.getBytes(Charset.defaultCharset()));
+        this.config = MessageBodyReaderFactory.get(Partitioning.class).readFrom(Partitioning.class, null, new Annotation[0], MediaType.APPLICATION_JSON_TYPE, null, is);
     }
 
     public String getBrokerURL(PartitionBroker partitionBroker, String id) {

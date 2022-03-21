@@ -17,8 +17,13 @@
 package org.apache.activemq.partition.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.activemq.json.MessageBodyWriterFactory;
 
+import javax.ws.rs.core.MediaType;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.lang.annotation.Annotation;
+import java.nio.charset.Charset;
 import java.util.Collection;
 import java.util.HashSet;
 
@@ -42,7 +47,9 @@ public class Target {
     @Override
     public String toString() {
         try {
-            return Partitioning.TO_STRING_MAPPER.writeValueAsString(this);
+            final ByteArrayOutputStream os = new ByteArrayOutputStream();
+            MessageBodyWriterFactory.get(Target.class).writeTo(this, Target.class, null, new Annotation[0], MediaType.APPLICATION_JSON_TYPE, null, os);
+            return new String(os.toByteArray(), Charset.defaultCharset());
         } catch (IOException e) {
             return super.toString();
         }
