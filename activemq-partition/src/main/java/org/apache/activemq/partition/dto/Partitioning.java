@@ -26,26 +26,19 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.activemq.json.MessageBodyWriterFactory;
 
+import javax.ws.rs.core.MediaType;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.lang.annotation.Annotation;
+import java.nio.charset.Charset;
 import java.util.HashMap;
 
 /**
  * The main Configuration class for the PartitionBroker plugin
  */
 public class Partitioning {
-
-    static final public ObjectMapper MAPPER = new ObjectMapper();
-    static {
-        MAPPER.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        MAPPER.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-    }
-
-    static final public ObjectMapper TO_STRING_MAPPER = new ObjectMapper();
-    static {
-        TO_STRING_MAPPER.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-        TO_STRING_MAPPER.enable(SerializationFeature.INDENT_OUTPUT);
-    }
 
     /**
      * If a client connects with a clientId which is listed in the
@@ -105,7 +98,9 @@ public class Partitioning {
     @Override
     public String toString() {
         try {
-            return TO_STRING_MAPPER.writeValueAsString(this);
+            final ByteArrayOutputStream os = new ByteArrayOutputStream();
+            MessageBodyWriterFactory.get(Partitioning.class).writeTo(this, Partitioning.class, null, new Annotation[0], MediaType.APPLICATION_JSON_TYPE, null, os);
+            return new String(os.toByteArray(), Charset.defaultCharset());
         } catch (IOException e) {
             return super.toString();
         }

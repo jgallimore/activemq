@@ -16,7 +16,10 @@
  */
 package org.apache.activemq.json;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
@@ -40,6 +43,10 @@ public class JacksonMessageBodyReader<T> implements MessageBodyReader<T> {
     @Override
     public T readFrom(final Class<T> cls, final Type type, final Annotation[] annotations, final MediaType mediaType, final MultivaluedMap<String, String> multivaluedMap, final InputStream inputStream) throws IOException, WebApplicationException {
         final ObjectMapper mapper = new ObjectMapper();
+        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+        mapper.enable(SerializationFeature.INDENT_OUTPUT);
+
         return mapper.readerFor(cls).readValue(inputStream);
     }
 }
