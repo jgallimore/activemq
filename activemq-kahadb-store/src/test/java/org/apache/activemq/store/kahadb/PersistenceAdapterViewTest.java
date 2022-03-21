@@ -21,18 +21,13 @@ import org.apache.activemq.ScheduledMessage;
 import org.apache.activemq.broker.BrokerService;
 import org.apache.activemq.broker.jmx.PersistenceAdapterViewMBean;
 import org.apache.activemq.command.ActiveMQQueue;
-import org.apache.activemq.store.kahadb.scheduler.JobSchedulerStoreImpl;
 import org.apache.activemq.util.IOHelper;
 import org.junit.Assert;
 import org.junit.Test;
 import org.skyscreamer.jsonassert.Customization;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
-import org.skyscreamer.jsonassert.RegularExpressionValueMatcher;
 import org.skyscreamer.jsonassert.comparator.CustomComparator;
-import org.skyscreamer.jsonassert.comparator.JSONComparator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.jms.BytesMessage;
 import javax.jms.Connection;
@@ -44,11 +39,8 @@ import java.util.Set;
 
 public class PersistenceAdapterViewTest {
 
-    private static final Logger LOG = LoggerFactory.getLogger(PersistenceAdapterViewTest.class);
-
-    BrokerService brokerService;
-    JobSchedulerStoreImpl jobSchedulerStore;
-    KahaDBPersistenceAdapter kahaDBPersistenceAdapter;
+    private BrokerService brokerService;
+    private KahaDBPersistenceAdapter kahaDBPersistenceAdapter;
 
     @Test
     public void setShouldExposePersistenceAdapterStats() throws Exception {
