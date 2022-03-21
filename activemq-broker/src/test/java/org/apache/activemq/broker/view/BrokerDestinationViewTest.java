@@ -40,6 +40,11 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.skyscreamer.jsonassert.Customization;
+import org.skyscreamer.jsonassert.JSONAssert;
+import org.skyscreamer.jsonassert.JSONCompareMode;
+import org.skyscreamer.jsonassert.ValueMatcher;
+import org.skyscreamer.jsonassert.comparator.CustomComparator;
 
 public class BrokerDestinationViewTest {
 
@@ -98,12 +103,15 @@ public class BrokerDestinationViewTest {
 
          final BrokerViewMBean brokerView = getBrokerView();
          String output = brokerView.queryQueues(mapper.writeValueAsString(filter), 1, 10);
-         Map<?,?> queryResults = mapper.readValue(output, Map.class);
 
-         final Integer count = (Integer) queryResults.get("count");
-         final Map<?,?> data = (Map<?, ?>) queryResults.get("data");
-         assertEquals((Integer)1, count);
-         assertEquals(1, data.size());
+         final String destOName = "org.apache.activemq:type=Broker,brokerName=localhost,destinationType=Queue,destinationName=testQueue";
+         final String expected = "{\"data\": { \"" + destOName + "\": { } }, \"count\": 1 }";
+         final String path = "data." + destOName;
+
+         // check we have the correct destination name, count and JSON structure. The fields on the destination
+         // may vary, so we use a custom comparator to avoid checking them
+
+         JSONAssert.assertEquals(expected, output, new CustomComparator(JSONCompareMode.STRICT, new Customization(path, (o1, o2) -> true)));
     }
 
     private BrokerViewMBean getBrokerView() throws MalformedObjectNameException {

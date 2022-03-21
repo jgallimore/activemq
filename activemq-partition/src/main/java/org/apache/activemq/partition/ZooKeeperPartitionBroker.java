@@ -18,6 +18,7 @@ package org.apache.activemq.partition;
 
 import org.apache.activemq.broker.Broker;
 import org.apache.activemq.leveldb.replicated.groups.ZKClient;
+import org.apache.activemq.json.MessageBodyReaderFactory;
 import org.apache.activemq.partition.dto.Partitioning;
 import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher;
@@ -26,6 +27,11 @@ import org.linkedin.util.clock.Timespan;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.ws.rs.core.MediaType;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.lang.annotation.Annotation;
+import java.nio.charset.Charset;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -116,7 +122,9 @@ public class ZooKeeperPartitionBroker extends PartitionBroker {
         }
 
         try {
-            config = Partitioning.MAPPER.readValue(data, Partitioning.class);
+
+            final ByteArrayInputStream is = new ByteArrayInputStream(data);
+            this.config = MessageBodyReaderFactory.get(Partitioning.class).readFrom(Partitioning.class, null, new Annotation[0], MediaType.APPLICATION_JSON_TYPE, null, is);
         } catch (Exception e) {
             LOG.warn("Invalid partitioning configuration: " + e, e);
         }

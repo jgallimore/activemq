@@ -46,6 +46,10 @@
       <groupId>org.apache.activemq</groupId>
       <artifactId>activemq-openwire-legacy</artifactId>
     </dependency>
+    <dependency>
+      <groupId>javax.ws.rs</groupId>
+      <artifactId>javax.ws.rs-api</artifactId>
+    </dependency>
 
     <!-- =============================== -->
     <!-- Optional Dependencies -->
@@ -70,6 +74,18 @@
       <optional>true</optional>
     </dependency>
 
+    <!-- if the end user wanted to use a JSON-B implementation as opposed to Jackson -->
+    <dependency>
+      <groupId>javax.json</groupId>
+      <artifactId>javax.json-api</artifactId>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>javax.json.bind</groupId>
+      <artifactId>javax.json.bind-api</artifactId>
+      <optional>true</optional>
+    </dependency>
+
     <!-- =============================== -->
     <!-- Testing Dependencies -->
     <!-- =============================== -->
@@ -86,6 +102,11 @@
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.skyscreamer</groupId>
+      <artifactId>jsonassert</artifactId>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 
