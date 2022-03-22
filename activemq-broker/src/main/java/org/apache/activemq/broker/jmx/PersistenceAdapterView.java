@@ -16,19 +16,22 @@
  */
 package org.apache.activemq.broker.jmx;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.activemq.json.MessageBodyWriterFactory;
 import org.apache.activemq.management.TimeStatisticImpl;
 import org.apache.activemq.store.PersistenceAdapter;
 import org.apache.activemq.store.PersistenceAdapterStatistics;
 
+import javax.ws.rs.core.MediaType;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.lang.annotation.Annotation;
+import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
 public class PersistenceAdapterView implements PersistenceAdapterViewMBean {
 
-    private final static ObjectMapper mapper = new ObjectMapper();
     private final String name;
     private final PersistenceAdapter persistenceAdapter;
 
@@ -98,7 +101,10 @@ public class PersistenceAdapterView implements PersistenceAdapterViewMBean {
                 result.put("slowReadTime", getTimeStatisticAsMap(persistenceAdapterStatistics.getSlowReadTime()));
                 result.put("writeTime", getTimeStatisticAsMap(persistenceAdapterStatistics.getWriteTime()));
                 result.put("readTime", getTimeStatisticAsMap(persistenceAdapterStatistics.getReadTime()));
-                return mapper.writeValueAsString(result);
+
+                final ByteArrayOutputStream os = new ByteArrayOutputStream();
+                MessageBodyWriterFactory.get(Map.class).writeTo(result, Map.class, null, new Annotation[0], MediaType.APPLICATION_JSON_TYPE, null, os);
+                return new String(os.toByteArray(), Charset.defaultCharset());
             } catch (IOException e) {
                 return e.toString();
             }
