@@ -51,7 +51,7 @@ public class MessageBodyWriterFactory {
 
         try {
             Class.forName("javax.json.bind.Jsonb");
-            return Class.forName("org.apache.activemq.json.JacksonMessageBodyWriter");
+            return Class.forName("org.apache.activemq.json.JsonBMessageBodyWriter");
         } catch (Exception e) {
         }
 
