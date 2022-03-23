@@ -34,6 +34,23 @@ import java.lang.reflect.Type;
  */
 public class JsonBMessageBodyWriter<T> implements MessageBodyWriter<T> {
 
+    private static final Jsonb JSONB = getJsonB();
+
+    private static Jsonb getJsonB() {
+        final ClassLoader oldCl = Thread.currentThread().getContextClassLoader();
+        final ClassLoader cl = JsonBMessageBodyWriter.class.getClassLoader();
+        Thread.currentThread().setContextClassLoader(cl);
+
+        try {
+            return JsonbBuilder.create(new JsonbConfig().withFormatting(true));
+        } catch (Exception e) {
+            return null;
+        } finally {
+            Thread.currentThread().setContextClassLoader(oldCl);
+        }
+    }
+
+
     @Override
     public boolean isWriteable(Class<?> aClass, Type type, Annotation[] annotations, MediaType mediaType) {
         return MediaType.APPLICATION_JSON_TYPE.isCompatible(mediaType);
@@ -41,7 +58,6 @@ public class JsonBMessageBodyWriter<T> implements MessageBodyWriter<T> {
 
     @Override
     public void writeTo(final T t, Class<?> cls, final Type type, final Annotation[] annotations, final MediaType mediaType, final MultivaluedMap<String, Object> multivaluedMap, final OutputStream outputStream) throws IOException, WebApplicationException {
-        final Jsonb jsonb = JsonbBuilder.create(new JsonbConfig().withFormatting(true));
-        jsonb.toJson(t, outputStream);
+        JSONB.toJson(t, outputStream);
     }
 }

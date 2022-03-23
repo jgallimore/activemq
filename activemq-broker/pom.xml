@@ -80,9 +80,14 @@
       <artifactId>javax.json-api</artifactId>
       <optional>true</optional>
     </dependency>
+<!--    <dependency>-->
+<!--      <groupId>javax.json.bind</groupId>-->
+<!--      <artifactId>javax.json.bind-api</artifactId>-->
+<!--      <optional>true</optional>-->
+<!--    </dependency>-->
     <dependency>
-      <groupId>javax.json.bind</groupId>
-      <artifactId>javax.json.bind-api</artifactId>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-jsonb_1.0_spec</artifactId>
       <optional>true</optional>
     </dependency>
 

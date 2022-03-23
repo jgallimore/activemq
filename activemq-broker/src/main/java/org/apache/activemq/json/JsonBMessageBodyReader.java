@@ -33,6 +33,22 @@ import java.lang.reflect.Type;
  * @param <T>
  */
 public class JsonBMessageBodyReader<T> implements MessageBodyReader<T> {
+    private static final Jsonb JSONB = getJsonB();
+
+    private static Jsonb getJsonB() {
+        final ClassLoader oldCl = Thread.currentThread().getContextClassLoader();
+        final ClassLoader cl = JsonBMessageBodyReader.class.getClassLoader();
+        Thread.currentThread().setContextClassLoader(cl);
+
+        try {
+            return JsonbBuilder.create(new JsonbConfig().withFormatting(true));
+        } catch (Exception e) {
+            return null;
+        } finally {
+            Thread.currentThread().setContextClassLoader(oldCl);
+        }
+    }
+
     @Override
     public boolean isReadable(final Class<?> cls, final Type type, final Annotation[] annotations, final MediaType mediaType) {
         return MediaType.APPLICATION_JSON_TYPE.isCompatible(mediaType);
@@ -40,7 +56,6 @@ public class JsonBMessageBodyReader<T> implements MessageBodyReader<T> {
 
     @Override
     public T readFrom(final Class<T> cls, final Type type, final Annotation[] annotations, final MediaType mediaType, final MultivaluedMap<String, String> multivaluedMap, final InputStream inputStream) throws IOException, WebApplicationException {
-        final Jsonb jsonb = JsonbBuilder.create(new JsonbConfig().withFormatting(true));
-        return jsonb.fromJson(inputStream, cls);
+        return JSONB.fromJson(inputStream, cls);
     }
 }
