@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.apache.activemq</groupId>
     <artifactId>activemq-parent</artifactId>
-    <version>5.16.5-SNAPSHOT</version>
+    <version>5.16.6-SNAPSHOT</version>
   </parent>
 
   <artifactId>activemq-client</artifactId>
@@ -35,6 +35,7 @@
     <activemq.osgi.import.pkg>
       !com.google.errorprone.annotations,
       !com.google.errorprone.annotations.concurrent,
+      com.thoughtworks.xstream.*;resolution:="optional",
       *
     </activemq.osgi.import.pkg>
     <activemq.osgi.private.pkg>

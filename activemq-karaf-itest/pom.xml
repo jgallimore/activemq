@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.apache.activemq</groupId>
     <artifactId>activemq-parent</artifactId>
-    <version>5.16.5-SNAPSHOT</version>
+    <version>5.16.6-SNAPSHOT</version>
   </parent>
 
   <artifactId>activemq-karaf-itest</artifactId>
@@ -105,13 +105,6 @@
       <version>${qpid-jms-version}</version>
       <scope>test</scope>
     </dependency>
-    <dependency>
-      <groupId>io.netty</groupId>
-      <artifactId>netty-all</artifactId>
-      <version>${netty-all-version}</version>
-      <scope>test</scope>
-    </dependency>
-
     <dependency>
       <groupId>org.apache.camel.karaf</groupId>
       <artifactId>apache-camel</artifactId>
