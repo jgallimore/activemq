@@ -36,6 +36,7 @@ import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.Service;
 import org.apache.activemq.broker.BrokerService;
 import org.apache.activemq.util.LRUCache;
+import org.apache.activemq.util.RegisterJmx;
 import org.apache.activemq.util.ThreadPoolUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -648,6 +649,8 @@ public abstract class JmsConnector implements Service {
     private ThreadPoolExecutor createExecutor() {
         ThreadPoolExecutor exec = new ThreadPoolExecutor(0, 2, 30, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(), factory);
         exec.allowCoreThreadTimeOut(true);
+
+        RegisterJmx.addJmx(exec, "JmsConnector-" + getName().replaceAll(":", "-"));
         return exec;
     }
 }

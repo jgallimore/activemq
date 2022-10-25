@@ -55,6 +55,7 @@ import org.apache.activemq.transport.tcp.TcpTransportServer;
 import org.apache.activemq.util.FactoryFinder;
 import org.apache.activemq.util.IOExceptionSupport;
 import org.apache.activemq.util.IntrospectionSupport;
+import org.apache.activemq.util.RegisterJmx;
 import org.apache.activemq.util.ServiceStopper;
 import org.apache.activemq.wireformat.WireFormat;
 import org.apache.activemq.wireformat.WireFormatFactory;
@@ -161,6 +162,7 @@ public class AutoTcpTransportServer extends TcpTransportServer {
         //allow the thread pool to shrink if the max number of threads isn't needed
         //and the pool can grow and shrink as needed if contention is high
         newConnectionExecutor.allowCoreThreadTimeOut(true);
+        RegisterJmx.addJmx(newConnectionExecutor, "AutoTcpTransportNewConnection");
 
         //Executor for waiting for bytes to detection of protocol
         protocolDetectionExecutor = new ThreadPoolExecutor(maxConnectionThreadPoolSize,
@@ -169,6 +171,7 @@ public class AutoTcpTransportServer extends TcpTransportServer {
                 new LinkedBlockingQueue<Runnable>());
         //allow the thread pool to shrink if the max number of threads isn't needed
         protocolDetectionExecutor.allowCoreThreadTimeOut(true);
+        RegisterJmx.addJmx(protocolDetectionExecutor, "AutoTcpTransportProtocolDetection");
 
         this.brokerService = brokerService;
         this.enabledProtocols = enabledProtocols;

@@ -16,6 +16,8 @@
  */
 package org.apache.activemq.transport.nio;
 
+import org.apache.activemq.util.RegisterJmx;
+
 import java.io.IOException;
 import java.nio.channels.spi.AbstractSelectableChannel;
 import java.util.LinkedList;
@@ -58,6 +60,8 @@ public final class SelectorManager {
                     return t;
                 }
             }, newRejectionHandler());
+
+        RegisterJmx.addJmx(rc, "NIOSelector");
 
         return rc;
     }

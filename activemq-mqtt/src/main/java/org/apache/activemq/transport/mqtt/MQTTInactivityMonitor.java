@@ -33,6 +33,7 @@ import org.apache.activemq.transport.AbstractInactivityMonitor;
 import org.apache.activemq.transport.InactivityIOException;
 import org.apache.activemq.transport.Transport;
 import org.apache.activemq.transport.TransportFilter;
+import org.apache.activemq.util.RegisterJmx;
 import org.apache.activemq.wireformat.WireFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -302,6 +303,8 @@ public class MQTTInactivityMonitor extends TransportFilter {
     private ThreadPoolExecutor createExecutor() {
         ThreadPoolExecutor exec = new ThreadPoolExecutor(0, Integer.MAX_VALUE, 60, TimeUnit.SECONDS, new SynchronousQueue<Runnable>(), factory);
         exec.allowCoreThreadTimeOut(true);
+
+        RegisterJmx.addJmx(exec, "MQTTInactivity Monitor");
         return exec;
     }
 }

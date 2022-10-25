@@ -31,6 +31,7 @@ import org.apache.activemq.transport.AbstractInactivityMonitor;
 import org.apache.activemq.transport.InactivityIOException;
 import org.apache.activemq.transport.Transport;
 import org.apache.activemq.transport.TransportFilter;
+import org.apache.activemq.util.RegisterJmx;
 import org.apache.activemq.wireformat.WireFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -161,6 +162,7 @@ public class AmqpInactivityMonitor extends TransportFilter {
                 if (CONNECTION_CHECK_TASK_COUNTER == 0) {
                     if (ASYNC_TASKS == null || ASYNC_TASKS.isShutdown()) {
                         ASYNC_TASKS = createExecutor();
+                        RegisterJmx.addJmx(ASYNC_TASKS, "AmqpInactivityMonitor");
                     }
                     CONNECTION_CHECK_TASK_TIMER = new Timer("AMQP InactivityMonitor State Check", true);
                 }

@@ -72,6 +72,7 @@ import org.apache.activemq.usage.Usage;
 import org.apache.activemq.usage.UsageListener;
 import org.apache.activemq.util.ByteSequence;
 import org.apache.activemq.util.IOExceptionSupport;
+import org.apache.activemq.util.RegisterJmx;
 import org.apache.activemq.util.ThreadPoolUtils;
 import org.apache.activemq.wireformat.WireFormat;
 import org.slf4j.Logger;
@@ -276,6 +277,9 @@ public class JournalPersistenceAdapter implements PersistenceAdapter, JournalEve
                 return t;
             }
         });
+
+        RegisterJmx.addJmx(checkpointExecutor, "CheckpointExecutor");
+
         // checkpointExecutor.allowCoreThreadTimeOut(true);
 
         this.usageManager.getMemoryUsage().addUsageListener(this);

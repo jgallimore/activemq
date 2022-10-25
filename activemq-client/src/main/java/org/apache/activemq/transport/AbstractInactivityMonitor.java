@@ -33,6 +33,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import org.apache.activemq.command.KeepAliveInfo;
 import org.apache.activemq.command.WireFormatInfo;
 import org.apache.activemq.thread.SchedulerTimerTask;
+import org.apache.activemq.util.RegisterJmx;
 import org.apache.activemq.util.ThreadPoolUtils;
 import org.apache.activemq.wireformat.WireFormat;
 import org.slf4j.Logger;
@@ -43,6 +44,8 @@ import org.slf4j.LoggerFactory;
  * the transport.
  */
 public abstract class AbstractInactivityMonitor extends TransportFilter {
+
+    private static AtomicInteger count = new AtomicInteger();
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractInactivityMonitor.class);
 
@@ -525,6 +528,8 @@ public abstract class AbstractInactivityMonitor extends TransportFilter {
         ThreadPoolExecutor exec = new ThreadPoolExecutor(getDefaultCorePoolSize(), getDefaultMaximumPoolSize(), getDefaultKeepAliveTime(),
                 TimeUnit.SECONDS, newWorkQueue(), factory, newRejectionHandler());
         exec.allowCoreThreadTimeOut(true);
+
+        RegisterJmx.addJmx(exec, "AbstractInactivityMonitor" + count.incrementAndGet());
         return exec;
     }
 

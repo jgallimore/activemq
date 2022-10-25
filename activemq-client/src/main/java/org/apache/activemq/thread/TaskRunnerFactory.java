@@ -27,6 +27,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 
+import org.apache.activemq.util.RegisterJmx;
 import org.apache.activemq.util.ThreadPoolUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -213,6 +214,8 @@ public class TaskRunnerFactory implements Executor {
         } else {
             rc.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
         }
+
+        RegisterJmx.addJmx(rc, "Worker-" + name);
 
         return rc;
     }
