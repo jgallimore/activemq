@@ -842,6 +842,7 @@ public class BrokerService implements Service {
         }
         if (this.executor != null) {
             ThreadPoolUtils.shutdownNow(executor);
+            RegisterJmx.removeJmx(executor);
             this.executor = null;
         }
 
@@ -2626,6 +2627,7 @@ public class BrokerService implements Service {
             }
             if (networkConnectorStartExecutor != null) {
                 // executor done when enqueued tasks are complete
+                RegisterJmx.removeJmx(networkConnectorStartExecutor);
                 ThreadPoolUtils.shutdown(networkConnectorStartExecutor);
             }
 

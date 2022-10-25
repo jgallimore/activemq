@@ -363,6 +363,8 @@ public class AutoTcpTransportServer extends TcpTransportServer {
                 }
             } catch (InterruptedException e) {
             }
+
+            RegisterJmx.removeJmx(newConnectionExecutor);
         }
         if (protocolDetectionExecutor != null) {
             protocolDetectionExecutor.shutdownNow();
@@ -372,6 +374,8 @@ public class AutoTcpTransportServer extends TcpTransportServer {
                 }
             } catch (InterruptedException e) {
             }
+
+            RegisterJmx.removeJmx(protocolDetectionExecutor);
         }
         super.doStop(stopper);
     }

@@ -316,6 +316,7 @@ public class JournalPersistenceAdapter implements PersistenceAdapter, JournalEve
         checkpoint(true, true);
         checkpointTask.shutdown();
         ThreadPoolUtils.shutdown(checkpointExecutor);
+        RegisterJmx.removeJmx(checkpointExecutor);
         checkpointExecutor = null;
 
         queues.clear();

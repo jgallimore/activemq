@@ -507,6 +507,7 @@ public abstract class AbstractInactivityMonitor extends TransportFilter {
                     try {
                         ThreadPoolUtils.shutdownGraceful(ASYNC_TASKS, 0);
                     } finally {
+                        RegisterJmx.removeJmx(ASYNC_TASKS);
                         ASYNC_TASKS = null;
                     }
                 }

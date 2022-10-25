@@ -24,6 +24,7 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -43,6 +44,7 @@ import org.slf4j.LoggerFactory;
  */
 public class TaskRunnerFactory implements Executor {
 
+    private static final AtomicInteger COUNT = new AtomicInteger();
     private static final Logger LOG = LoggerFactory.getLogger(TaskRunnerFactory.class);
     private final AtomicReference<ExecutorService> executorRef = new AtomicReference<>();
     private int maxIterationsPerRun;
@@ -146,6 +148,12 @@ public class TaskRunnerFactory implements Executor {
         //clear under a lock to prevent threads from seeing initDone == true
         //but then getting null from executorRef
         synchronized(this) {
+            final ExecutorService executorService = executorRef.get();
+            if (executorService instanceof ThreadPoolExecutor) {
+                final ThreadPoolExecutor tpe = (ThreadPoolExecutor) executorService;
+                RegisterJmx.removeJmx(tpe);
+            }
+
             executorRef.set(null);
             initDone.set(false);
         }
@@ -215,7 +223,7 @@ public class TaskRunnerFactory implements Executor {
             rc.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
         }
 
-        RegisterJmx.addJmx(rc, "Worker-" + name);
+        RegisterJmx.addJmx(rc, "Worker-" + name + "-" + COUNT.incrementAndGet());
 
         return rc;
     }

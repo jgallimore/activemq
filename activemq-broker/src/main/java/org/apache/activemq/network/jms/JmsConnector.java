@@ -173,6 +173,7 @@ public abstract class JmsConnector implements Service {
         if (started.compareAndSet(true, false)) {
 
             ThreadPoolUtils.shutdown(connectionService);
+            RegisterJmx.removeJmx(connectionService);
             connectionService = null;
 
             if (foreignConnection.get() != null) {
