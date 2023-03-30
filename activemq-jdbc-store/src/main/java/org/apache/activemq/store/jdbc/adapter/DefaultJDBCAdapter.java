@@ -404,6 +404,7 @@ public class DefaultJDBCAdapter implements JDBCAdapter {
         ResultSet rs = null;
         try {
             s = c.getConnection().prepareStatement(this.statements.getFindAllMessagesStatement());
+            s.setFetchSize(1000);
             s.setString(1, destination.getQualifiedName());
             rs = s.executeQuery();
             if (this.statements.isUseExternalMessageReferences()) {
