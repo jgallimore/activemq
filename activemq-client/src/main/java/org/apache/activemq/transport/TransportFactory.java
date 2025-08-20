@@ -22,11 +22,13 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.UnknownHostException;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.Executor;
 
+import org.apache.activemq.openwire.OpenWireFormat;
 import org.apache.activemq.util.FactoryFinder;
 import org.apache.activemq.util.IOExceptionSupport;
 import org.apache.activemq.util.IntrospectionSupport;
@@ -121,6 +123,17 @@ public abstract class TransportFactory {
             Transport rc = configure(transport, wf, options);
             //remove auto
             IntrospectionSupport.extractProperties(options, "auto.");
+
+            // add any other parameters to the platform details
+            final Map<String, Object> metadata = IntrospectionSupport.extractProperties(options, "metadata.");
+            if (metadata.size() > 0 && wf instanceof OpenWireFormat) {
+                final StringBuilder sb = new StringBuilder();
+
+                metadata.forEach((k, v) -> sb.append(k).append(": ").append(v).append(","));
+                final OpenWireFormat openWireFormat = (OpenWireFormat) wf;
+                openWireFormat.getPreferedWireFormatInfo().setPlatformDetails(
+                        openWireFormat.getPreferedWireFormatInfo().getPlatformDetails() + ", " + sb.toString());
+            }
 
             if (!options.isEmpty()) {
                 throw new IllegalArgumentException("Invalid connect parameters: " + options);
