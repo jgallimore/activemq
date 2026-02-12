@@ -14,27 +14,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.activemq.pool;
+package org.apache.activemq.store.jdbc.h2;
 
-import jakarta.jms.Connection;
+import javax.sql.DataSource;
+import org.h2.jdbcx.JdbcDataSource;
 
-import org.junit.Test;
+import java.io.IOException;
 
-import static junit.framework.Assert.assertNotNull;
+public class H2DB {
 
-public class ConfigFromPropsTest {
+    public static DataSource createDataSource(String db) throws IOException {
+        var ds = new JdbcDataSource();
+        ds.setURL(createURL(db));
+        ds.setUser(getUser());
+        ds.setPassword(getPassword());
+        return ds;
+    }
 
-    @Test
-    public void testBrokerUrlForRarAdminObject() throws Exception {
-        final XaPooledConnectionFactory underTest = new XaPooledConnectionFactory();
-        try {
-            underTest.setBrokerUrl("vm://configFromPropsTest?broker.persistent=false");
-            final Connection connection = underTest.createConnection();
-            assertNotNull(connection);
-            connection.close();
-            assertNotNull(underTest.getBrokerUrl());
-        } finally {
-            underTest.stop();
-        }
+    public static String createURL(String db) {
+        return "jdbc:h2:./target/h2-db/" + db + "/" + db + "-h2.db;DB_CLOSE_DELAY=-1";
+    }
+
+    public static String getUser() {
+        return "sa";
+    }
+
+    public static String getPassword() {
+        return "";
     }
 }

@@ -14,27 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.activemq.pool;
+package org.apache.activemq.store.jdbc.adapter;
 
-import jakarta.jms.Connection;
+import org.apache.activemq.store.jdbc.Statements;
 
-import org.junit.Test;
+/**
+ * 
+ * @org.apache.xbean.XBean element="h2-jdbc-adapter"
+ */
+public class H2JDBCAdapter extends BytesJDBCAdapter {
 
-import static junit.framework.Assert.assertNotNull;
-
-public class ConfigFromPropsTest {
-
-    @Test
-    public void testBrokerUrlForRarAdminObject() throws Exception {
-        final XaPooledConnectionFactory underTest = new XaPooledConnectionFactory();
-        try {
-            underTest.setBrokerUrl("vm://configFromPropsTest?broker.persistent=false");
-            final Connection connection = underTest.createConnection();
-            assertNotNull(connection);
-            connection.close();
-            assertNotNull(underTest.getBrokerUrl());
-        } finally {
-            underTest.stop();
-        }
+    @Override
+    public void setStatements(Statements statements) {
+        statements.setBinaryDataType("BLOB");
+        super.setStatements(statements);
     }
+
+    @Override
+    public String limitQuery(String query) {
+        return query + " LIMIT " + getMaxRows();
+    }
+
 }

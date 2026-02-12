@@ -14,27 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.activemq.pool;
+package org.apache.activemq.store.jdbc.h2;
 
-import jakarta.jms.Connection;
+import junit.framework.Test;
+import org.apache.activemq.store.jdbc.JDBCPersistenceAdapter;
+import org.apache.activemq.store.jdbc.JDBCStoreBrokerTest;
+import org.apache.activemq.store.jdbc.adapter.H2JDBCAdapter;
 
-import org.junit.Test;
+import javax.sql.DataSource;
 
-import static junit.framework.Assert.assertNotNull;
+public class H2JDBCStoreBrokerTest extends JDBCStoreBrokerTest {
 
-public class ConfigFromPropsTest {
+    @Override
+    protected void configureJDBCPersistenceAdapter(final JDBCPersistenceAdapter jdbc, String dbname) throws Exception {
+        jdbc.setDataSource(H2DB.createDataSource("H2JDBCStoreBrokerTest"));
+        jdbc.setAdapter(new H2JDBCAdapter());
+    }
 
-    @Test
-    public void testBrokerUrlForRarAdminObject() throws Exception {
-        final XaPooledConnectionFactory underTest = new XaPooledConnectionFactory();
-        try {
-            underTest.setBrokerUrl("vm://configFromPropsTest?broker.persistent=false");
-            final Connection connection = underTest.createConnection();
-            assertNotNull(connection);
-            connection.close();
-            assertNotNull(underTest.getBrokerUrl());
-        } finally {
-            underTest.stop();
-        }
+    public static Test suite() {
+        return suite(H2JDBCStoreBrokerTest.class);
     }
 }
