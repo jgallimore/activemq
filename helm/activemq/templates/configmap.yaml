@@ -28,10 +28,6 @@ data:
   activemq.xml: |
     {{- .Values.broker.activemqXml | nindent 4 }}
   {{- end }}
-  {{- if .Values.broker.jettyXml }}
-  jetty.xml: |
-    {{- .Values.broker.jettyXml | nindent 4 }}
-  {{- end }}
   {{- if .Values.broker.log4j2Properties }}
   log4j2.properties: |
     {{- .Values.broker.log4j2Properties | nindent 4 }}

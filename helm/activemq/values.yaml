@@ -107,8 +107,6 @@ broker:
 
   # -- Custom activemq.xml configuration (if empty, uses the default from the image)
   activemqXml: ""
-  # -- Custom jetty.xml configuration (if empty, uses the default from the image)
-  jettyXml: ""
   # -- Custom log4j2.properties (if empty, uses the default from the image)
   log4j2Properties: ""
 
@@ -140,12 +138,6 @@ service:
     enabled: true
     # -- MQTT service port
     port: 1883
-  # -- WebSocket port
-  ws:
-    # -- Enable WebSocket transport
-    enabled: true
-    # -- WebSocket service port
-    port: 61614
   # -- Additional service annotations
   annotations: {}
 

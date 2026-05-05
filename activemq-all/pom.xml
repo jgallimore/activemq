@@ -42,10 +42,6 @@
       <groupId>${project.groupId}</groupId>
       <artifactId>activemq-mqtt</artifactId>
     </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>activemq-http</artifactId>
-    </dependency>
     <!-- Stores -->
     <dependency>
       <groupId>${project.groupId}</groupId>
@@ -91,7 +87,6 @@
                   <include>${project.groupId}:activemq-pool</include>
                   <include>${project.groupId}:activemq-jms-pool</include>
                   <include>${project.groupId}:activemq-amqp</include>
-                  <include>${project.groupId}:activemq-http</include>
                   <include>${project.groupId}:activemq-mqtt</include>
                   <include>${project.groupId}:activemq-stomp</include>
                   <include>${project.groupId}:activemq-kahadb-store</include>
@@ -250,13 +245,6 @@
         <dependency>
           <groupId>${project.groupId}</groupId>
           <artifactId>activemq-amqp</artifactId>
-          <version>${project.version}</version>
-          <classifier>sources</classifier>
-          <optional>true</optional>
-        </dependency>
-        <dependency>
-          <groupId>${project.groupId}</groupId>
-          <artifactId>activemq-http</artifactId>
           <version>${project.version}</version>
           <classifier>sources</classifier>
           <optional>true</optional>

@@ -33,12 +33,10 @@ import java.net.InetSocketAddress;
 import java.net.URI;
 
 import org.apache.activemq.broker.TransportConnector;
-import org.apache.activemq.transport.amqp.joram.ActiveMQAdmin;
 import org.apache.activemq.util.NioSslTestUtil;
 import org.apache.qpid.jms.JmsConnection;
 import org.apache.qpid.jms.provider.amqp.AmqpProvider;
 import org.apache.qpid.jms.transports.netty.NettyTcpTransport;
-import org.objectweb.jtests.jms.framework.TestConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -80,8 +78,6 @@ public class JMSClientSslTest extends JMSClientTest {
 
     protected void testSslHandshakeRenegotiation(String protocol) throws Exception {
         enabledProtocols = protocol;
-
-        ActiveMQAdmin.enableJMSFrameTracing();
 
         connection = createConnection();
 

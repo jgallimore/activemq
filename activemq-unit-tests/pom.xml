@@ -233,21 +233,6 @@
       <scope>test</scope>
     </dependency>
 
-    <!--  Joram JMS conformance tests -->
-    <!-- AMQ-9239 FIXME: port to jakarta -->
-    <dependency>
-      <groupId>org.apache.activemq.tooling</groupId>
-      <artifactId>activemq-joram-jms-tests</artifactId>
-      <version>${project.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <!-- using it for Jetty's JNDI context to work /w Joram tests. -->
-      <groupId>org.eclipse.jetty</groupId>
-      <artifactId>jetty-jndi</artifactId>
-      <scope>test</scope>
-    </dependency>
-
     <!--  LDAP tests -->
     <dependency>
       <groupId>org.apache.directory.server</groupId>
@@ -965,10 +950,6 @@
                 <exclude>org/apache/activemq/transport/failover/ReconnectTest.*</exclude>
                 <exclude>org/apache/activemq/transport/fanout/FanoutTest.*</exclude>
                 <exclude>org/apache/activemq/transport/fanout/FanoutTransportBrokerTest.*</exclude>
-                <exclude>org/apache/activemq/transport/http/HttpClientReconnectTest.*</exclude>
-                <exclude>org/apache/activemq/transport/http/HttpJmsDurableTopicSendReceiveTest.*</exclude>
-                <exclude>org/apache/activemq/transport/http/HttpPersistentSendAndReceiveTest.*</exclude>
-                <exclude>org/apache/activemq/transport/http/HttpSpringTest.*</exclude>
                 <exclude>org/apache/activemq/transport/mqtt/MQTTTest.*</exclude>
                 <exclude>org/apache/activemq/transport/mqtt/MTQQNioTest.*</exclude>
                 <exclude>org/apache/activemq/transport/stomp/ConnectTest.*</exclude>

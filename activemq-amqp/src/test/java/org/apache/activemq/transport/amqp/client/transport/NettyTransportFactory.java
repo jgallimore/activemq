@@ -68,10 +68,6 @@ public final class NettyTransportFactory {
             case "ssl":
                 result = new NettyTcpTransport(remoteURI, transportOptions);
                 break;
-            case "ws":
-            case "wss":
-                result = new NettyWSTransport(remoteURI, transportOptions);
-                break;
             default:
                 throw new IllegalArgumentException("Invalid URI Scheme: " + remoteURI.getScheme());
         }

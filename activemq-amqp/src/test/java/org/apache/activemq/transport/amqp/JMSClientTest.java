@@ -62,12 +62,10 @@ import org.apache.activemq.broker.jmx.BrokerViewMBean;
 import org.apache.activemq.broker.jmx.ConnectorViewMBean;
 import org.apache.activemq.broker.jmx.QueueViewMBean;
 import org.apache.activemq.broker.jmx.SubscriptionViewMBean;
-import org.apache.activemq.transport.amqp.joram.ActiveMQAdmin;
 import org.apache.activemq.util.Wait;
 import org.apache.qpid.jms.JmsConnectionFactory;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.objectweb.jtests.jms.framework.TestConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -81,7 +79,6 @@ public class JMSClientTest extends JMSClientTestSupport {
     @SuppressWarnings("rawtypes")
     @Test(timeout=30000)
     public void testProducerConsume() throws Exception {
-        ActiveMQAdmin.enableJMSFrameTracing();
 
         connection = createConnection();
         {
@@ -101,7 +98,7 @@ public class JMSClientTest extends JMSClientTestSupport {
             }
 
             MessageConsumer consumer = session.createConsumer(queue);
-            Message msg = consumer.receive(TestConfig.TIMEOUT);
+            Message msg = consumer.receive(30000);
             assertNotNull(msg);
             assertTrue(msg instanceof TextMessage);
         }
@@ -109,7 +106,6 @@ public class JMSClientTest extends JMSClientTestSupport {
 
     @Test(timeout = 60000)
     public void testSendJMSMapMessage() throws Exception {
-        ActiveMQAdmin.enableJMSFrameTracing();
 
         connection = createConnection();
         {
@@ -136,7 +132,6 @@ public class JMSClientTest extends JMSClientTestSupport {
 
     @Test(timeout=30000)
     public void testAnonymousProducerConsume() throws Exception {
-        ActiveMQAdmin.enableJMSFrameTracing();
 
         connection = createConnection();
         {
@@ -152,14 +147,14 @@ public class JMSClientTest extends JMSClientTestSupport {
 
             {
                 MessageConsumer consumer = session.createConsumer(queue1);
-                Message msg = consumer.receive(TestConfig.TIMEOUT);
+                Message msg = consumer.receive(30000);
                 assertNotNull(msg);
                 assertTrue(msg instanceof TextMessage);
                 consumer.close();
             }
             {
                 MessageConsumer consumer = session.createConsumer(queue2);
-                Message msg = consumer.receive(TestConfig.TIMEOUT);
+                Message msg = consumer.receive(30000);
                 assertNotNull(msg);
                 assertTrue(msg instanceof TextMessage);
                 consumer.close();
@@ -169,7 +164,6 @@ public class JMSClientTest extends JMSClientTestSupport {
 
     @Test(timeout=30*1000)
     public void testTransactedConsumer() throws Exception {
-        ActiveMQAdmin.enableJMSFrameTracing();
         final int msgCount = 1;
 
         connection = createConnection();
@@ -183,7 +177,7 @@ public class JMSClientTest extends JMSClientTestSupport {
 
         MessageConsumer consumer = session.createConsumer(queue);
 
-        Message msg = consumer.receive(TestConfig.TIMEOUT);
+        Message msg = consumer.receive(30000);
         assertNotNull(msg);
         assertTrue(msg instanceof TextMessage);
 
@@ -199,7 +193,6 @@ public class JMSClientTest extends JMSClientTestSupport {
     @Test(timeout=30000)
     public void testRollbackRececeivedMessage() throws Exception {
 
-        ActiveMQAdmin.enableJMSFrameTracing();
         final int msgCount = 1;
 
         connection = createConnection();
@@ -214,7 +207,7 @@ public class JMSClientTest extends JMSClientTestSupport {
         MessageConsumer consumer = session.createConsumer(queue);
 
         // Receive and roll back, first receive should not show redelivered.
-        Message msg = consumer.receive(TestConfig.TIMEOUT);
+        Message msg = consumer.receive(30000);
         LOG.info("Test received msg: {}", msg);
         assertNotNull(msg);
         assertTrue(msg instanceof TextMessage);
@@ -223,7 +216,7 @@ public class JMSClientTest extends JMSClientTestSupport {
         session.rollback();
 
         // Receive and roll back, first receive should not show redelivered.
-        msg = consumer.receive(TestConfig.TIMEOUT);
+        msg = consumer.receive(30000);
         assertNotNull(msg);
         assertTrue(msg instanceof TextMessage);
         assertEquals(true, msg.getJMSRedelivered());
@@ -286,7 +279,6 @@ public class JMSClientTest extends JMSClientTestSupport {
     @Test(timeout=60000)
     public void testTXConsumerAndLargeNumberOfMessages() throws Exception {
 
-        ActiveMQAdmin.enableJMSFrameTracing();
         final int msgCount = 300;
 
         connection = createConnection();
@@ -306,7 +298,7 @@ public class JMSClientTest extends JMSClientTestSupport {
                 if ((i % 100) == 0) {
                     LOG.info("Attempting receive of Message #{}", i);
                 }
-                Message msg = consumer.receive(TestConfig.TIMEOUT);
+                Message msg = consumer.receive(30000);
                 assertNotNull("Should receive message: " + i, msg);
                 assertTrue(msg instanceof TextMessage);
             }
@@ -323,7 +315,6 @@ public class JMSClientTest extends JMSClientTestSupport {
     @SuppressWarnings("rawtypes")
     @Test(timeout=30000)
     public void testSelectors() throws Exception{
-        ActiveMQAdmin.enableJMSFrameTracing();
 
         connection = createConnection();
         {
@@ -351,7 +342,7 @@ public class JMSClientTest extends JMSClientTestSupport {
             assertEquals(2, count);
 
             MessageConsumer consumer = session.createConsumer(queue, "JMSPriority > 8");
-            Message msg = consumer.receive(TestConfig.TIMEOUT);
+            Message msg = consumer.receive(30000);
             assertNotNull(msg);
             assertTrue(msg instanceof TextMessage);
             assertEquals("hello + 9", ((TextMessage) msg).getText());
@@ -361,7 +352,6 @@ public class JMSClientTest extends JMSClientTestSupport {
     @SuppressWarnings("rawtypes")
     @Test(timeout=30000)
     public void testSelectorsWithJMSType() throws Exception{
-        ActiveMQAdmin.enableJMSFrameTracing();
 
         connection = createConnection();
         {
@@ -391,7 +381,7 @@ public class JMSClientTest extends JMSClientTestSupport {
             assertEquals(2, count);
 
             MessageConsumer consumer = session.createConsumer(queue, "JMSType = '"+ type +"'");
-            Message msg = consumer.receive(TestConfig.TIMEOUT);
+            Message msg = consumer.receive(30000);
             assertNotNull(msg);
             assertTrue(msg instanceof TextMessage);
             assertEquals("Unexpected JMSType value", type, msg.getJMSType());
@@ -661,7 +651,6 @@ public class JMSClientTest extends JMSClientTestSupport {
 
     @Test(timeout=30000)
     public void testSyncSends() throws Exception {
-        ActiveMQAdmin.enableJMSFrameTracing();
         connection = createConnection(true);
         Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
         Queue queue = session.createQueue(getDestinationName());
@@ -677,7 +666,6 @@ public class JMSClientTest extends JMSClientTestSupport {
 
     @Test(timeout=30000)
     public void testDurableConsumerAsync() throws Exception {
-        ActiveMQAdmin.enableJMSFrameTracing();
         final CountDownLatch latch = new CountDownLatch(1);
         final AtomicReference<Message> received = new AtomicReference<>();
         String durableClientId = getDestinationName() + "-ClientId";
@@ -712,7 +700,6 @@ public class JMSClientTest extends JMSClientTestSupport {
 
     @Test(timeout=30000)
     public void testDurableConsumerSync() throws Exception {
-        ActiveMQAdmin.enableJMSFrameTracing();
         String durableClientId = getDestinationName() + "-ClientId";
 
         connection = createConnection(durableClientId);
@@ -745,7 +732,6 @@ public class JMSClientTest extends JMSClientTestSupport {
 
     @Test(timeout=30000)
     public void testTopicConsumerAsync() throws Exception {
-        ActiveMQAdmin.enableJMSFrameTracing();
         final CountDownLatch latch = new CountDownLatch(1);
         final AtomicReference<Message> received = new AtomicReference<>();
 
@@ -780,7 +766,6 @@ public class JMSClientTest extends JMSClientTestSupport {
 
     @Test(timeout=45000)
     public void testTopicConsumerSync() throws Exception {
-        ActiveMQAdmin.enableJMSFrameTracing();
 
         connection = createConnection();
         {
@@ -812,7 +797,6 @@ public class JMSClientTest extends JMSClientTestSupport {
 
     @Test(timeout=30000)
     public void testConnectionsAreClosed() throws Exception {
-        ActiveMQAdmin.enableJMSFrameTracing();
 
         final ConnectorViewMBean connector = getProxyToConnectionView(getTargetConnectorName());
         LOG.info("Current number of Connections is: {}", connector.connectionCount());
@@ -845,7 +829,6 @@ public class JMSClientTest extends JMSClientTestSupport {
 
     @Test(timeout=30000)
     public void testExecptionListenerCalledOnBrokerStop() throws Exception {
-        ActiveMQAdmin.enableJMSFrameTracing();
 
         connection = createConnection();
         Session s = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
@@ -874,7 +857,6 @@ public class JMSClientTest extends JMSClientTestSupport {
 
     @Test(timeout=30000)
     public void testSessionTransactedCommit() throws Exception {
-        ActiveMQAdmin.enableJMSFrameTracing();
 
         connection = createConnection();
         Session session = connection.createSession(true, Session.SESSION_TRANSACTED);
@@ -903,7 +885,6 @@ public class JMSClientTest extends JMSClientTestSupport {
 
     @Test(timeout=30000)
     public void testSessionTransactedRollback() throws Exception {
-        ActiveMQAdmin.enableJMSFrameTracing();
 
         connection = createConnection();
         Session session = connection.createSession(true, Session.AUTO_ACKNOWLEDGE);
@@ -1003,7 +984,6 @@ public class JMSClientTest extends JMSClientTestSupport {
 
     @Test(timeout=30000)
     public void testDurableConsumerUnsubscribe() throws Exception {
-        ActiveMQAdmin.enableJMSFrameTracing();
 
         String durableClientId = getDestinationName() + "-ClientId";
 
@@ -1049,7 +1029,6 @@ public class JMSClientTest extends JMSClientTestSupport {
 
     @Test(timeout=30000)
     public void testDurableConsumerUnsubscribeWhileNoSubscription() throws Exception {
-        ActiveMQAdmin.enableJMSFrameTracing();
 
         final BrokerViewMBean broker = getProxyToBroker();
 
@@ -1076,7 +1055,6 @@ public class JMSClientTest extends JMSClientTestSupport {
 
     @Test(timeout=30000)
     public void testDurableConsumerUnsubscribeWhileActive() throws Exception {
-        ActiveMQAdmin.enableJMSFrameTracing();
         String durableClientId = getDestinationName() + "-ClientId";
 
         final BrokerViewMBean broker = getProxyToBroker();
@@ -1130,7 +1108,6 @@ public class JMSClientTest extends JMSClientTestSupport {
 
     @Test(timeout=30000)
     public void testCreateTemporaryQueue() throws Exception {
-        ActiveMQAdmin.enableJMSFrameTracing();
 
         connection = createConnection();
         {
@@ -1146,7 +1123,6 @@ public class JMSClientTest extends JMSClientTestSupport {
 
     @Test(timeout=30000)
     public void testDeleteTemporaryQueue() throws Exception {
-        ActiveMQAdmin.enableJMSFrameTracing();
 
         connection = createConnection();
         {
@@ -1173,7 +1149,6 @@ public class JMSClientTest extends JMSClientTestSupport {
 
     @Test(timeout=30000)
     public void testCreateTemporaryTopic() throws Exception {
-        ActiveMQAdmin.enableJMSFrameTracing();
 
         connection = createConnection();
         {
@@ -1189,7 +1164,6 @@ public class JMSClientTest extends JMSClientTestSupport {
 
     @Test(timeout=30000)
     public void testDeleteTemporaryTopic() throws Exception {
-        ActiveMQAdmin.enableJMSFrameTracing();
 
         connection = createConnection();
         {
@@ -1243,7 +1217,6 @@ public class JMSClientTest extends JMSClientTestSupport {
 
     @Test(timeout=30000)
     public void testRetroactiveConsumerSupported() throws Exception {
-        ActiveMQAdmin.enableJMSFrameTracing();
 
         connection = createConnection();
         Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
@@ -1262,7 +1235,6 @@ public class JMSClientTest extends JMSClientTestSupport {
 
     @Test(timeout=30000)
     public void testExclusiveConsumerSupported() throws Exception {
-        ActiveMQAdmin.enableJMSFrameTracing();
 
         connection = createConnection();
         Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
@@ -1281,7 +1253,6 @@ public class JMSClientTest extends JMSClientTestSupport {
 
     @Test(timeout=30000)
     public void testUnpplicableDestinationOption() throws Exception {
-        ActiveMQAdmin.enableJMSFrameTracing();
 
         connection = createConnection();
         Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);

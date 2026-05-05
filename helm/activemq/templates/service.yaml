@@ -56,9 +56,3 @@ spec:
       targetPort: mqtt
       protocol: TCP
     {{- end }}
-    {{- if .Values.service.ws.enabled }}
-    - name: ws
-      port: {{ .Values.service.ws.port }}
-      targetPort: ws
-      protocol: TCP
-    {{- end }}

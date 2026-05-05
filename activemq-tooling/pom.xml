@@ -35,7 +35,6 @@
     <module>activemq-perf-maven-plugin</module>
     <module>activemq-maven-plugin</module>
     <module>activemq-junit</module>
-    <module>activemq-joram-jms-tests</module>
     <module>activemq-jakarta-messaging-tck</module>
   </modules>
 </project>

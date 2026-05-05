@@ -34,7 +34,6 @@ import jakarta.jms.TextMessage;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.broker.jmx.QueueViewMBean;
-import org.apache.activemq.transport.amqp.joram.ActiveMQAdmin;
 import org.junit.Test;
 
 public class AMQ4563Test extends AmqpTestSupport {
@@ -44,7 +43,6 @@ public class AMQ4563Test extends AmqpTestSupport {
     @Test(timeout = 60000)
     public void testMessagesAreAckedAMQProducer() throws Exception {
         int messagesSent = 3;
-        ActiveMQAdmin.enableJMSFrameTracing();
         assertTrue(brokerService.isPersistent());
 
         Connection connection = createAMQConnection();
@@ -73,7 +71,6 @@ public class AMQ4563Test extends AmqpTestSupport {
 
     @Test(timeout = 60000)
     public void testSelectingOnAMQPMessageID() throws Exception {
-        ActiveMQAdmin.enableJMSFrameTracing();
         assertTrue(brokerService.isPersistent());
 
         Connection connection = JMSClientContext.INSTANCE.createConnection(amqpURI);
@@ -96,7 +93,6 @@ public class AMQ4563Test extends AmqpTestSupport {
 
     @Test(timeout = 60000)
     public void testSelectingOnActiveMQMessageID() throws Exception {
-        ActiveMQAdmin.enableJMSFrameTracing();
         assertTrue(brokerService.isPersistent());
 
         Connection connection = createAMQConnection();
@@ -119,7 +115,6 @@ public class AMQ4563Test extends AmqpTestSupport {
     @Test(timeout = 60000)
     public void testMessagesAreAckedAMQPProducer() throws Exception {
         int messagesSent = 3;
-        ActiveMQAdmin.enableJMSFrameTracing();
         assertTrue(brokerService.isPersistent());
 
         Connection connection = JMSClientContext.INSTANCE.createConnection(amqpURI);

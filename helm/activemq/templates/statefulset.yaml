@@ -126,11 +126,6 @@ spec:
               containerPort: 1883
               protocol: TCP
             {{- end }}
-            {{- if .Values.service.ws.enabled }}
-            - name: ws
-              containerPort: 61614
-              protocol: TCP
-            {{- end }}
             - name: web
               containerPort: 8161
               protocol: TCP
@@ -155,11 +150,6 @@ spec:
               mountPath: /opt/apache-activemq/conf/activemq.xml
               subPath: activemq.xml
             {{- end }}
-            {{- if .Values.broker.jettyXml }}
-            - name: config
-              mountPath: /opt/apache-activemq/conf/jetty.xml
-              subPath: jetty.xml
-            {{- end }}
             {{- if .Values.broker.log4j2Properties }}
             - name: config
               mountPath: /opt/apache-activemq/conf/log4j2.properties
@@ -169,7 +159,7 @@ spec:
             {{- toYaml . | nindent 12 }}
             {{- end }}
       volumes:
-        {{- if or .Values.broker.activemqXml .Values.broker.jettyXml .Values.broker.log4j2Properties }}
+        {{- if or .Values.broker.activemqXml .Values.broker.log4j2Properties }}
         - name: config
           configMap:
             name: {{ include "activemq.fullname" . }}-config

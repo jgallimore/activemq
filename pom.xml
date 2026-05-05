@@ -73,8 +73,6 @@
     <jasypt-version>1.9.3</jasypt-version>
     <jaxb-version>4.0.7</jaxb-version>
     <jaxb-bundle-version>2.3.2_1</jaxb-bundle-version>
-    <jetty-version>11.0.27-TT.1</jetty-version>
-    <jetty-version-range>[11,13)</jetty-version-range>
     <jmdns-version>3.6.3</jmdns-version>
     <javassist-version>3.31.0-GA</javassist-version>
     <jettison-version>1.5.5</jettison-version>
@@ -217,7 +215,6 @@
     <module>activemq-karaf-itest</module>
     <module>assembly</module>
     <module>activemq-log4j-appender</module>
-    <module>activemq-http</module>
   </modules>
 
   <scm>
@@ -235,11 +232,6 @@
       <dependency>
         <groupId>org.apache.activemq</groupId>
         <artifactId>activemq-amqp</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.activemq</groupId>
-        <artifactId>activemq-http</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -422,23 +414,6 @@
         <artifactId>asm</artifactId>
         <version>9.9.1</version>
       </dependency>
-
-     <!-- Servlet 5.0 and JSP -->
-     <dependency>
-       <groupId>jakarta.servlet.jsp</groupId>
-       <artifactId>jakarta.servlet.jsp-api</artifactId>
-       <version>3.1.1</version>
-     </dependency>
-     <dependency>
-       <groupId>jakarta.servlet</groupId>
-       <artifactId>jakarta.servlet-api</artifactId>
-       <version>5.0.0</version>
-     </dependency>
-     <dependency>
-       <groupId>jakarta.websocket</groupId>
-       <artifactId>jakarta.websocket-api</artifactId>
-       <version>2.2.0</version>
-     </dependency>
 
       <!-- =============================== -->
       <!-- Optional dependencies -->
@@ -796,14 +771,6 @@
       </dependency>
 
       <dependency>
-        <groupId>org.eclipse.jetty</groupId>
-        <artifactId>jetty-bom</artifactId>
-        <version>${jetty-version}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-
-      <dependency>
         <groupId>org.apache.httpcomponents</groupId>
         <artifactId>httpclient</artifactId>
         <version>${httpclient-version}</version>
@@ -988,11 +955,6 @@
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>javacc-maven-plugin</artifactId>
           <version>${javacc-maven-plugin-version}</version>
-        </plugin>
-        <plugin>
-          <groupId>org.eclipse.jetty</groupId>
-          <artifactId>jetty-maven-plugin</artifactId>
-          <version>${jetty-version}</version>
         </plugin>
         <plugin>
           <groupId>org.codehaus.mojo</groupId>

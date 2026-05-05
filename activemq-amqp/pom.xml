@@ -73,23 +73,6 @@
       <scope>test</scope>
     </dependency>
 
-    <!--  Joram JMS conformance tests -->
-    <dependency>
-      <groupId>org.apache.activemq.tooling</groupId>
-      <artifactId>activemq-joram-jms-tests</artifactId>
-      <version>${project.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.eclipse.jetty</groupId>
-      <artifactId>jetty-server</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.eclipse.jetty</groupId>
-      <artifactId>jetty-jndi</artifactId>
-      <scope>test</scope>
-    </dependency>
     <dependency>
       <groupId>org.apache.activemq</groupId>
       <artifactId>activemq-broker</artifactId>
@@ -108,17 +91,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.activemq</groupId>
-      <artifactId>activemq-http</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.activemq</groupId>
       <artifactId>activemq-mqtt</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.eclipse.jetty.websocket</groupId>
-      <artifactId>websocket-jetty-server</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -330,7 +303,6 @@
               <includes>
                 <include>**/AmqpConnectionsTest.*</include>
                 <include>**/JMSClientSslTest.*</include>
-                <include>**/JoramJmsNioTest.*</include>
                 <include>**/AmqpFrameParserTest.*</include>
               </includes>
             </configuration>
@@ -359,30 +331,6 @@
         </plugins>
       </build>
     </profile>
-
-      <profile>
-          <id>activemq.tests.windows.excludes</id>
-          <activation>
-              <os>
-                  <family>Windows</family>
-              </os>
-          </activation>
-          <build>
-              <plugins>
-                  <plugin>
-                      <artifactId>maven-surefire-plugin</artifactId>
-                      <configuration>
-                          <excludes combine.children="append">
-                              <exclude>**/JoramJmsTest.*</exclude>
-                              <exclude>**/JoramJmsNioTest.*</exclude>
-                              <exclude>**/JoramSslTest.*</exclude>
-                              <exclude>**/JoramJmsNioPlusSslTest.*</exclude>
-                          </excludes>
-                      </configuration>
-                  </plugin>
-              </plugins>
-          </build>
-      </profile>
 
   </profiles>
 </project>

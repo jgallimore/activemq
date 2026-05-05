@@ -69,9 +69,6 @@ Broker transport connectors (from within the cluster):
 {{- if .Values.service.mqtt.enabled }}
   MQTT:           mqtt://{{ include "activemq.fullname" . }}:{{ .Values.service.mqtt.port }}
 {{- end }}
-{{- if .Values.service.ws.enabled }}
-  WebSocket:      ws://{{ include "activemq.fullname" . }}:{{ .Values.service.ws.port }}
-{{- end }}
 
 To connect a JMS client from outside the cluster:
   kubectl port-forward --namespace {{ .Release.Namespace }} svc/{{ include "activemq.fullname" . }} {{ .Values.service.openwire.port }}:{{ .Values.service.openwire.port }}

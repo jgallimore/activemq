@@ -125,7 +125,6 @@
         <include>${pom.groupId}:activemq-amqp</include>
         <include>${pom.groupId}:activemq-mqtt</include>
         <include>${pom.groupId}:activemq-stomp</include>
-        <include>${pom.groupId}:activemq-http</include>
         <include>${pom.groupId}:activemq-jdbc-store</include>
         <include>${pom.groupId}:activemq-log4j-appender</include>
         <include>${pom.groupId}:activemq-jms-pool</include>

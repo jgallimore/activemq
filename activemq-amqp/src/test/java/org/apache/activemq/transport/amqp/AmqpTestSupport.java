@@ -99,8 +99,6 @@ public class AmqpTestSupport {
     protected int openwirePort;
 
     static {
-        System.setProperty("jetty.ssl.sniRequired", "false");
-        System.setProperty("jetty.ssl.sniHostCheck", "false");
     }
 
     @Before
