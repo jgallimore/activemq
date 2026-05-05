@@ -18,9 +18,12 @@ package org.apache.activemq.config;
 
 import org.apache.activemq.broker.BrokerFactory;
 import org.apache.activemq.broker.BrokerService;
-import org.apache.camel.util.FileUtil;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Comparator;
 
 /**
  * A helper class that can be used to start the full broker distro with default configuration
@@ -35,12 +38,27 @@ public class IDERunner {
         System.setProperty("activemq.data", "target/");
         System.setProperty("activemq.conf", "src/release/conf");
 
-        FileUtil.removeDir(new File("target/kahadb"));
+        removeDir(new File("target/kahadb").toPath());
 
         BrokerService broker = BrokerFactory.createBroker("xbean:src/release/conf/activemq.xml");
         broker.start();
         broker.waitUntilStopped();
 
+    }
+
+    private static void removeDir(final Path dir) throws IOException {
+        if (!Files.exists(dir)) {
+            return;
+        }
+        try (var stream = Files.walk(dir)) {
+            stream.sorted(Comparator.reverseOrder()).forEach(p -> {
+                try {
+                    Files.delete(p);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        }
     }
 
 }

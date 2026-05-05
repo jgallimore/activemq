@@ -88,48 +88,15 @@
       <directoryMode>0755</directoryMode>
     </dependencySet>
     <dependencySet>
-      <outputDirectory>lib/camel</outputDirectory>
-      <unpack>false</unpack>
-      <scope>runtime</scope>
-      <includes>
-        <include>org.apache.camel:camel-activemq</include>
-        <include>org.apache.camel:camel-api</include>
-        <include>org.apache.camel:camel-base</include>
-        <include>org.apache.camel:camel-base-engine</include>
-        <include>org.apache.camel:camel-core</include>
-        <include>org.apache.camel:camel-core-catalog</include>
-        <include>org.apache.camel:camel-core-engine</include>
-        <include>org.apache.camel:camel-core-languages</include>
-        <include>org.apache.camel:camel-core-model</include>
-        <include>org.apache.camel:camel-core-processor</include>
-        <include>org.apache.camel:camel-core-reifier</include>
-        <include>org.apache.camel:camel-core-xml</include>
-        <include>org.apache.camel:camel-log</include>
-        <include>org.apache.camel:camel-management-api</include>
-        <include>org.apache.camel:camel-spring</include>
-        <include>org.apache.camel:camel-spring-xml</include>
-        <include>org.apache.camel:camel-support</include>
-        <include>org.apache.camel:camel-timer</include>
-        <include>org.apache.camel:camel-util</include>
-        <include>org.apache.camel:camel-jms</include>
-        <include>org.apache.camel:camel-xml-jaxb</include>
-      </includes>
-      <fileMode>0644</fileMode>
-      <directoryMode>0755</directoryMode>
-    </dependencySet>
-    <dependencySet>
       <outputDirectory>lib/optional</outputDirectory>
       <unpack>false</unpack>
       <scope>runtime</scope>
       <includes>
         <include>${pom.groupId}:activemq-amqp</include>
         <include>${pom.groupId}:activemq-mqtt</include>
+        <include>org.fusesource.mqtt-client:mqtt-client</include>
         <include>${pom.groupId}:activemq-stomp</include>
         <include>${pom.groupId}:activemq-jdbc-store</include>
-        <include>${pom.groupId}:activemq-log4j-appender</include>
-        <include>${pom.groupId}:activemq-jms-pool</include>
-        <include>${pom.groupId}:activemq-pool</include>
-        <include>${pom.groupId}:activemq-shiro</include>
         <include>commons-beanutils:commons-beanutils</include>
         <include>commons-collections:commons-collections</include>
         <include>org.apache.commons:commons-dbcp2</include>
@@ -139,8 +106,6 @@
         <include>org.apache.logging.log4j:log4j-api</include>
         <include>org.apache.logging.log4j:log4j-core</include>
         <include>jakarta.resource:jakarta.resource-api</include>
-        <include>org.apache.httpcomponents:httpclient</include>
-        <include>org.apache.httpcomponents:httpcore</include>
         <include>org.apache.xbean:xbean-spring</include>
         <include>org.springframework:spring-aop</include>
         <include>org.springframework:spring-beans</include>
@@ -159,25 +124,6 @@
         <include>org.apache.qpid:proton-j</include>
         <include>${pom.groupId}:activemq-runtime-config</include>
         <include>org.jvnet.jaxb:jaxb-plugins-runtime</include>
-
-        <!-- Apache Shiro dependencies: -->
-        <include>org.apache.shiro:shiro-core</include>
-        <include>org.apache.shiro:shiro-spring</include>
-      </includes>
-      <fileMode>0644</fileMode>
-      <directoryMode>0755</directoryMode>
-    </dependencySet>
-    <dependencySet>
-      <outputDirectory>lib/extra</outputDirectory>
-      <unpack>false</unpack>
-      <scope>runtime</scope>
-      <useTransitiveFiltering>true</useTransitiveFiltering>
-      <includes>
-        <!-- mqtt -->
-        <include>org.fusesource.mqtt-client:mqtt-client</include>
-
-        <!-- junit integration -->
-        <include>org.apache.activemq.tooling:activemq-junit</include>
       </includes>
       <fileMode>0644</fileMode>
       <directoryMode>0755</directoryMode>

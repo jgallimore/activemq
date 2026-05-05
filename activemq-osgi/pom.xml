@@ -156,9 +156,6 @@
               javax.servlet*;resolution:=optional,
               jakarta.servlet*;resolution:=optional,
               com.thoughtworks.xstream*;resolution:=optional,
-              org.apache.camel*;resolution:=optional,
-              org.apache.camel.spring.handler;resolution:=optional,
-              org.apache.camel.spring.xml.handler;resolution:=optional,
               org.apache.derby.jdbc*;resolution:=optional,
               org.apache.geronimo.transaction.manager*;resolution:=optional,
               org.apache.hadoop*;resolution:=optional,
@@ -220,32 +217,6 @@
             <_contract>!*</_contract>
           </instructions>
         </configuration>
-      </plugin>
-      <!-- get camel core spring schema info -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-dependency-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>unpack</id>
-            <goals>
-              <goal>unpack</goal>
-            </goals>
-            <configuration>
-              <artifactItems>
-                <artifactItem>
-                  <groupId>org.apache.camel</groupId>
-                  <artifactId>camel-spring</artifactId>
-                  <version>${camel-version}</version>
-                  <type>jar</type>
-                  <overWrite>false</overWrite>
-                  <outputDirectory>${basedir}/target/extra-resources/</outputDirectory>
-                  <includes>camel-spring.xsd</includes>
-                </artifactItem>
-              </artifactItems>
-            </configuration>
-          </execution>
-        </executions>
       </plugin>
       <!-- Copy all necessary resources from other modules, like spring schema mapping, xbean resources, etc. -->
       <plugin>

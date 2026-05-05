@@ -121,11 +121,4 @@
 
     </broker>
 
-    <!--
-        Uncomment to enable Camel
-        Take a look at activemq-camel.xml for more details
-
-    <import resource="camel.xml"/>
-    -->
-
 </beans>
