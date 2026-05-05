@@ -87,11 +87,6 @@
 
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>activemq-web</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>${project.groupId}</groupId>
       <artifactId>activemq-spring</artifactId>
     </dependency>
 
@@ -146,8 +141,7 @@
             </Embed-Dependency>
             <Embed-Transitive>true</Embed-Transitive>
             <Export-Package>
-              org.apache.activemq*;version=${project.version};-noimport:=true;-split-package:=merge-first,
-              org.apache.activemq.web*;version=${project.version};-noimport:=true;-split-package:=merge-first
+              org.apache.activemq*;version=${project.version};-noimport:=true;-split-package:=merge-first
             </Export-Package>
             <Import-Package>
               !org.apache.commons.daemon,

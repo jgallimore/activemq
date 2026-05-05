@@ -117,14 +117,10 @@
        <transportConnector name="openwire" uri="tcp://0.0.0.0:61616"/>
     </transportConnectors>
 
-    <!-- destroy the spring context on shutdown to stop jetty -->
     <shutdownHooks>
         <bean xmlns="http://www.springframework.org/schema/beans" class="org.apache.activemq.hooks.SpringContextHook" />
     </shutdownHooks>
 
   </broker>
-
-  <!-- Use Web applications and Camel in secured broker environment -->
-  <import resource="jetty-demo.xml"/>
 
 </beans>

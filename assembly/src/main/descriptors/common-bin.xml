@@ -28,77 +28,7 @@
         <include>conf/*.ts</include>
         <include>conf/*.ks</include>
         <include>conf/*.cert</include>
-        <include>webapps/*.ico</include>
       </includes>
-      <fileMode>0644</fileMode>
-      <directoryMode>0755</directoryMode>
-    </fileSet>
-
-    <!-- lets copy the portions of the admin web app we need - as we can't exclude stuff from the WAR -->
-    <fileSet>
-      <directory>../activemq-web-console/src/main/webapp/images</directory>
-      <outputDirectory>webapps/images</outputDirectory>
-      <includes>
-        <include>*</include>
-      </includes>
-      <fileMode>0644</fileMode>
-      <directoryMode>0755</directoryMode>
-    </fileSet>
-    <fileSet>
-      <directory>../activemq-web-console/src/main/webapp/styles</directory>
-      <outputDirectory>webapps/styles</outputDirectory>
-      <includes>
-        <include>*</include>
-      </includes>
-      <fileMode>0644</fileMode>
-      <directoryMode>0755</directoryMode>
-    </fileSet>
-    <fileSet>
-      <directory>../activemq-web-console/src/main/webapp</directory>
-      <outputDirectory>webapps/admin</outputDirectory>
-      <excludes>
-        <exclude>**/activemq.xml</exclude>
-        <exclude>**/webconsole-embedded.xml</exclude>
-      </excludes>
-      <fileMode>0644</fileMode>
-      <directoryMode>0755</directoryMode>
-    </fileSet>
-    <fileSet>
-      <directory>../activemq-web-console/target/classes</directory>
-      <outputDirectory>webapps/admin/WEB-INF/classes</outputDirectory>
-      <includes>
-        <include>**/*.class</include>
-      </includes>
-      <fileMode>0644</fileMode>
-      <directoryMode>0755</directoryMode>
-    </fileSet>
-
-    <!-- the web demo -->
-    <fileSet>
-      <directory>../activemq-web-demo/src/main/webapp</directory>
-      <outputDirectory>webapps-demo/demo</outputDirectory>
-      <excludes>
-        <exclude>**/activemq.xml</exclude>
-        <exclude>**/webconsole-embedded.xml</exclude>
-      </excludes>
-      <fileMode>0644</fileMode>
-      <directoryMode>0755</directoryMode>
-    </fileSet>
-    <fileSet>
-      <directory>../activemq-web-console/src/main/webapp/styles/</directory>
-      <outputDirectory>webapps-demo/demo/styles/</outputDirectory>
-      <fileMode>0644</fileMode>
-      <directoryMode>0755</directoryMode>
-    </fileSet>
-    <fileSet>
-      <directory>../activemq-web-console/src/main/webapp/images/</directory>
-      <outputDirectory>webapps-demo/demo/images/</outputDirectory>
-      <fileMode>0644</fileMode>
-      <directoryMode>0755</directoryMode>
-    </fileSet>
-    <fileSet>
-      <directory>../activemq-web-console/src/main/webapp/js/</directory>
-      <outputDirectory>webapps-demo/demo/js/</outputDirectory>
       <fileMode>0644</fileMode>
       <directoryMode>0755</directoryMode>
     </fileSet>
@@ -143,7 +73,6 @@
         <include>org.apache.activemq.protobuf:activemq-protobuf</include>
         <include>jakarta.jms:jakarta.jms-api</include>
         <include>jakarta.transaction:jakarta.transaction-api</include>
-        <include>${pom.groupId}:activemq-web</include>
         <include>org.fusesource.hawtbuf:hawtbuf</include>
         <include>org.fusesource.hawtbuf:hawtbuf-proto</include>
         <include>jakarta.xml.bind:jakarta.xml.bind-api</include>
@@ -250,70 +179,6 @@
 
         <!-- junit integration -->
         <include>org.apache.activemq.tooling:activemq-junit</include>
-      </includes>
-      <fileMode>0644</fileMode>
-      <directoryMode>0755</directoryMode>
-    </dependencySet>
-    <dependencySet>
-      <outputDirectory>lib/web</outputDirectory>
-      <unpack>false</unpack>
-      <scope>runtime</scope>
-      <includes>
-        <include>org.springframework:spring-web</include>
-        <include>org.springframework:spring-webmvc</include>
-        <include>org.eclipse.jetty:jetty-annotations</include>
-        <include>org.eclipse.jetty:jetty-server</include>
-        <include>org.eclipse.jetty:jetty-xml</include>
-        <include>org.eclipse.jetty:jetty-webapp</include>
-        <include>org.eclipse.jetty:jetty-util</include>
-        <include>org.eclipse.jetty:jetty-http</include>
-        <include>org.eclipse.jetty:jetty-io</include>
-        <include>org.eclipse.jetty:jetty-jaas</include>
-        <include>org.eclipse.jetty:jetty-jndi</include>
-        <include>org.eclipse.jetty:jetty-plus</include>
-        <include>org.eclipse.jetty:jetty-servlet</include>
-        <include>org.eclipse.jetty:jetty-security</include>
-        <include>org.eclipse.jetty:jetty-rewrite</include>
-        <include>org.eclipse.jetty.toolchain:jetty-jakarta-servlet-api</include>
-        <include>org.eclipse.jetty.websocket:websocket-core-common</include>
-        <include>org.eclipse.jetty.websocket:websocket-core-server</include>
-        <include>org.eclipse.jetty.websocket:websocket-jetty-api</include>
-        <include>org.eclipse.jetty.websocket:websocket-jetty-common</include>
-        <include>org.eclipse.jetty.websocket:websocket-jetty-server</include>
-        <include>org.eclipse.jetty.websocket:websocket-servlet</include>
-        <include>org.eclipse.jetty.orbit:javax.security.auth.message</include>
-        <!-- include>jakarta.servlet:jakarta.servlet-api</include -->
-        <include>jakarta.websocket:jakarta.websocket-api</include>
-
-        <!-- JSP support -->
-        <!-- Jetty JSP api-->
-        <include>org.eclipse.jetty:apache-jsp</include>
-        <!-- Jetty JSP impl-->
-        <include>org.mortbay.jasper:apache-jsp</include>
-        <!-- jstl and el api -->
-        <include>org.eclipse.jetty:apache-jstl</include>
-        <include>jakarta.servlet.jsp.jstl:jakarta.servlet.jsp.jstl-api</include>
-        <include>org.glassfish.web:jakarta.servlet.jsp.jstl</include>
-        <!-- include>org.apache.taglibs:taglibs-standard-spec</include -->
-        <!-- jstl and el impl -->
-        <include>org.mortbay.jasper:apache-el</include>
-        <!-- include>org.apache.taglibs:taglibs-standard-impl</include -->
-
-        <include>jakarta.annotation:jakarta.annotation-api</include>
-        <include>org.ow2.asm:asm</include>
-        <include>org.eclipse.jdt:ecj</include>
-
-        <!-- Atom/RSS support -->
-        <include>com.rometools:rome</include>
-        <include>com.rometools:rome-utils</include>
-        <include>org.jdom:jdom2</include>
-
-        <!-- REST API -->
-        <include>org.jolokia:jolokia-core</include>
-        <include>org.jolokia:jolokia-server-core</include>
-        <include>org.jolokia:jolokia-json</include>
-        <include>org.jolokia:jolokia-service-jmx</include>
-        <include>org.jolokia:jolokia-service-serializer</include>
       </includes>
       <fileMode>0644</fileMode>
       <directoryMode>0755</directoryMode>

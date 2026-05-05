@@ -78,7 +78,6 @@
     <jmdns-version>3.6.3</jmdns-version>
     <javassist-version>3.31.0-GA</javassist-version>
     <jettison-version>1.5.5</jettison-version>
-    <jolokia-version>2.6.0</jolokia-version>
     <junit-version>4.13.2</junit-version>
     <h2-version>2.4.240</h2-version>
     <hamcrest-version>1.3</hamcrest-version>
@@ -212,9 +211,6 @@
     <module>activemq-spring</module>
     <module>activemq-runtime-config</module>
     <module>activemq-tooling</module>
-    <module>activemq-web</module>
-    <module>activemq-web-demo</module>
-    <module>activemq-web-console</module>
     <module>activemq-karaf</module>
     <module>activemq-osgi</module>
     <module>activemq-blueprint</module>
@@ -353,23 +349,6 @@
       </dependency>
       <dependency>
         <groupId>org.apache.activemq</groupId>
-        <artifactId>activemq-web</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.activemq</groupId>
-        <artifactId>activemq-web-demo</artifactId>
-        <version>${project.version}</version>
-        <type>war</type>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.activemq</groupId>
-        <artifactId>activemq-web-console</artifactId>
-        <version>${project.version}</version>
-        <type>war</type>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.activemq</groupId>
         <artifactId>activemq-console</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -388,12 +367,6 @@
         <groupId>org.apache.activemq</groupId>
         <artifactId>activemq-run</artifactId>
         <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.activemq</groupId>
-        <artifactId>activemq-web</artifactId>
-        <version>${project.version}</version>
-        <type>war</type>
       </dependency>
       <dependency>
         <groupId>org.apache.activemq</groupId>
@@ -1171,24 +1144,10 @@
             <exclude>**/resources/*.xsd</exclude>
             <exclude>**/src/test/resources/keystore</exclude>
             <exclude>**/*.ts</exclude>
-            <!-- web, web-console, web-demo files -->
-            <exclude>**/webapp/mqtt/mqttws31.js</exclude>
-            <exclude>**/webapp/js/dojo.js</exclude>
-            <exclude>**/jquery-*.js</exclude>
-            <exclude>**/bootstrap.min.css</exclude>
-            <exclude>**/bootstrap.min.responsive.css</exclude>
-            <exclude>**/prototype.js</exclude>
-            <exclude>**/web/behaviour.js</exclude>
-            <exclude>**/webapp/js/common.js</exclude>
-            <exclude>**/webapp/js/css.js</exclude>
-            <exclude>**/webapp/js/standardista-table-sorting.js</exclude>
             <exclude>**/*.data</exclude>
-            <exclude>**/webapp/test/assets/*</exclude>
             <exclude>**/*.lck</exclude>
             <exclude>**/*.patch</exclude>
             <exclude>**/*.diff</exclude>
-            <!-- plotkit -->
-            <exclude>**/webapp/js/plotkit/**/*</exclude>
             <!-- Eclipse files -->
             <exclude>**/.*</exclude>
             <exclude>**/.settings/*</exclude>

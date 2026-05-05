@@ -51,7 +51,7 @@ public class ValidateXMLConfigTest {
         // resource:copy-resource brings all config files into target/conf
         File sampleConfDir = new File("target/conf");
 
-        final HashSet<String> skipped = new HashSet<>(java.util.Arrays.asList("web.xml", "camel.xml", "jolokia-access.xml"));
+        final HashSet<String> skipped = new HashSet<>(java.util.Arrays.asList("camel.xml"));
 
         for (File xmlFile : Objects.requireNonNull(sampleConfDir.listFiles(pathname -> pathname.isFile() && pathname.getName().endsWith("xml") && !skipped.contains(pathname.getName())))) {
             validateXML(xmlFile);

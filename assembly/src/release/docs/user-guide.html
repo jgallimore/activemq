@@ -83,38 +83,6 @@ On Unix-like systems, type
 </pre>
 <p>to stop the broker.
 
-
-<h2>Access the web console</h2>
-
-In a web browser you can access the url <a href="http://0.0.0.0:8161/admin">http://0.0.0.0:8161/admin</a> to access the ActiveMQ web console.
-<br/>
-The broker may ask for credentials to login the web console the first time.
-The default username and password is admin/admin. You can configure this in the conf/user.properties file.
-
-<h2>Access the web demos</h2>
-
-You would need to start the broker with the demos included, which you do as follows:
-If you're using Windows, just type
-</p>
-<pre>
-    copy .\conf\jetty.xml .\examples\conf\
-    cd bin
-    activemq.bat start xbean:../examples/conf/activemq-demo.xml
-</pre>
-<p>
-On Unix-like systems, type
-</p>
-<pre>
-    cp ./conf/jetty.xml ./examples/conf/
-    ./bin/activemq console xbean:examples/conf/activemq-demo.xml
-</pre>
-
-In a web browser you can access the url <a href="http://0.0.0.0:8161/demo">http://0.0.0.0:8161/demo</a> to access the ActiveMQ web demos.
-<br/>
-The broker may ask for credentials to login the web console the first time.
-The default username and password is admin/admin. You can configure this in the conf/user.properties file.
-
-
 <h2>Example programs</h2>
 
 <p>Several runnable examples are in the examples directory, each with its own readme.md file containing instructions on how to run the example.</p>

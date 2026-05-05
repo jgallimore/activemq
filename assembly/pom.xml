@@ -117,10 +117,6 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>activemq-web</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
       <artifactId>activemq-jaas</artifactId>
     </dependency>
     <dependency>
@@ -139,16 +135,6 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>activemq-spring</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>activemq-web-demo</artifactId>
-      <type>war</type>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>activemq-web-console</artifactId>
-      <type>war</type>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
@@ -423,7 +409,6 @@
       <optional>true</optional>
     </dependency>
 
-    <!-- copied dependencies from activemq-web-console -->
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
@@ -443,26 +428,6 @@
     <dependency>
       <groupId>org.ow2.asm</groupId>
       <artifactId>asm</artifactId>
-    </dependency>
-
-    <dependency>
-        <groupId>org.eclipse.jetty</groupId>
-        <artifactId>apache-jsp</artifactId>
-    </dependency>
-    <dependency>
-        <groupId>org.eclipse.jetty</groupId>
-        <artifactId>apache-jstl</artifactId>
-        <version>11.0.0</version>
-    </dependency>
-    <dependency>
-      <groupId>jakarta.servlet.jsp.jstl</groupId>
-      <artifactId>jakarta.servlet.jsp.jstl-api</artifactId>
-      <version>3.0.2</version>
-    </dependency>
-    <dependency>
-      <groupId>org.glassfish.web</groupId>
-      <artifactId>jakarta.servlet.jsp.jstl</artifactId>
-      <version>3.0.1</version>
     </dependency>
     <dependency>
       <groupId>org.jasypt</groupId>
@@ -489,21 +454,6 @@
       <groupId>xerces</groupId>
       <artifactId>xmlParserAPIs</artifactId>
       <version>2.6.2</version>
-    </dependency>
-    <dependency>
-      <groupId>org.jolokia</groupId>
-      <artifactId>jolokia-server-core</artifactId>
-      <version>${jolokia-version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.jolokia</groupId>
-      <artifactId>jolokia-service-jmx</artifactId>
-      <version>${jolokia-version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.jolokia</groupId>
-      <artifactId>jolokia-service-serializer</artifactId>
-      <version>${jolokia-version}</version>
     </dependency>
     <dependency>
       <groupId>org.ops4j.pax.url</groupId>
