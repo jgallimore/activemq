@@ -18,9 +18,14 @@ package org.apache.activemq.config;
 
 import org.apache.activemq.broker.BrokerFactory;
 import org.apache.activemq.broker.BrokerService;
-import org.apache.camel.util.FileUtil;
 
-import java.io.File;
+import java.io.IOException;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 
 /**
  * A helper class that can be used to start the full broker distro with default configuration
@@ -28,19 +33,38 @@ import java.io.File;
  */
 public class IDERunner {
 
-    public static void main(String[] args) throws Exception {
+    public static void main(final String[] args) throws Exception {
 
         System.setProperty("activemq.base", ".");
         System.setProperty("activemq.home", "."); // not a valid home but ok for xml validation
         System.setProperty("activemq.data", "target/");
         System.setProperty("activemq.conf", "src/release/conf");
 
-        FileUtil.removeDir(new File("target/kahadb"));
+        deleteRecursively(Paths.get("target/kahadb"));
 
-        BrokerService broker = BrokerFactory.createBroker("xbean:src/release/conf/activemq.xml");
+        final BrokerService broker = BrokerFactory.createBroker("xbean:src/release/conf/activemq.xml");
         broker.start();
         broker.waitUntilStopped();
 
+    }
+
+    private static void deleteRecursively(final Path root) throws IOException {
+        if (!Files.exists(root)) {
+            return;
+        }
+        Files.walkFileTree(root, new SimpleFileVisitor<Path>() {
+            @Override
+            public FileVisitResult visitFile(final Path file, final BasicFileAttributes attrs) throws IOException {
+                Files.delete(file);
+                return FileVisitResult.CONTINUE;
+            }
+
+            @Override
+            public FileVisitResult postVisitDirectory(final Path dir, final IOException exc) throws IOException {
+                Files.delete(dir);
+                return FileVisitResult.CONTINUE;
+            }
+        });
     }
 
 }

@@ -54,10 +54,6 @@
       <artifactId>activemq-unit-tests</artifactId>
       <type>test-jar</type>
     </dependency>
-    <dependency>
-      <groupId>org.apache.activemq.tooling</groupId>
-      <artifactId>activemq-junit</artifactId>
-    </dependency>
 
     <dependency>
       <groupId>org.fusesource.hawtdispatch</groupId>
@@ -121,19 +117,6 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>activemq-runtime-config</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.jvnet.jaxb</groupId>
-      <artifactId>jaxb-plugins-runtime</artifactId>
-      <version>${jaxb-tools-version}</version>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>activemq-shiro</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
       <artifactId>activemq-spring</artifactId>
     </dependency>
     <dependency>
@@ -147,101 +130,6 @@
       <artifactId>activemq-run</artifactId>
     </dependency>
 
-    <!-- camel -->
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-activemq</artifactId>
-      <exclusions>
-        <!-- Current version of Camel has a dependency on the removed
-        activemq-client-jakarta module. This exclusion can eventually be removed
-        when we upgrade to a version of camel-activemq that depends on 6.x -->
-        <exclusion>
-          <groupId>org.apache.activemq</groupId>
-          <artifactId>activemq-client-jakarta</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-base</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-base-engine</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-core-catalog</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-core-engine</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-core-languages</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-core-model</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-core-processor</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-core-reifier</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-core-xml</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-log</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-management-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-util</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-spring</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-spring-xml</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-support</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-timer</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-jms</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-xml-jaxb</artifactId>
-    </dependency>
-
     <!-- commons -->
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>
@@ -250,10 +138,6 @@
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>
       <artifactId>httpcore</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>commons-beanutils</groupId>
-      <artifactId>commons-beanutils</artifactId>
     </dependency>
     <dependency>
       <groupId>commons-codec</groupId>
@@ -273,10 +157,6 @@
     <dependency>
       <groupId>activesoap</groupId>
       <artifactId>jaxp-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.jmdns</groupId>
-      <artifactId>jmdns</artifactId>
     </dependency>
     <dependency>
       <groupId>com.thoughtworks.xstream</groupId>
@@ -319,14 +199,6 @@
       <artifactId>jakarta.transaction-api</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.shiro</groupId>
-      <artifactId>shiro-core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.shiro</groupId>
-      <artifactId>shiro-spring</artifactId>
-    </dependency>
-    <dependency>
        <groupId>org.apache.xbean</groupId>
        <artifactId>xbean-spring</artifactId>
        <optional>true</optional>
@@ -355,10 +227,6 @@
       <groupId>org.springframework</groupId>
       <artifactId>spring-webmvc</artifactId>
       <optional>false</optional>
-    </dependency>
-    <dependency>
-        <groupId>org.springframework</groupId>
-        <artifactId>spring-oxm</artifactId>
     </dependency>
     <dependency>
       <groupId>org.codehaus.jettison</groupId>
