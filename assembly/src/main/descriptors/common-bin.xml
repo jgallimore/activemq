@@ -127,5 +127,35 @@
       <fileMode>0644</fileMode>
       <directoryMode>0755</directoryMode>
     </dependencySet>
+    <dependencySet>
+      <!-- Jetty + servlet/websocket APIs: required by activemq-http for HTTP/HTTPS and
+           ws:// / wss:// transports. Kept in its own directory so it's easy to drop the
+           whole web stack if HTTP and WebSocket transports aren't needed. -->
+      <outputDirectory>lib/web</outputDirectory>
+      <unpack>false</unpack>
+      <scope>runtime</scope>
+      <includes>
+        <include>jakarta.servlet:jakarta.servlet-api</include>
+        <include>jakarta.websocket:jakarta.websocket-api</include>
+        <include>org.eclipse.jetty:jetty-server</include>
+        <include>org.eclipse.jetty:jetty-http</include>
+        <include>org.eclipse.jetty:jetty-io</include>
+        <include>org.eclipse.jetty:jetty-util</include>
+        <include>org.eclipse.jetty:jetty-security</include>
+        <include>org.eclipse.jetty:jetty-servlet</include>
+        <include>org.eclipse.jetty:jetty-xml</include>
+        <include>org.eclipse.jetty:jetty-webapp</include>
+        <include>org.eclipse.jetty.websocket:websocket-jetty-api</include>
+        <include>org.eclipse.jetty.websocket:websocket-jetty-common</include>
+        <include>org.eclipse.jetty.websocket:websocket-jetty-server</include>
+        <include>org.eclipse.jetty.websocket:websocket-jetty-client</include>
+        <include>org.eclipse.jetty.websocket:websocket-servlet</include>
+        <include>org.eclipse.jetty.websocket:websocket-core-server</include>
+        <include>org.eclipse.jetty.websocket:websocket-core-client</include>
+        <include>org.eclipse.jetty.websocket:websocket-core-common</include>
+      </includes>
+      <fileMode>0644</fileMode>
+      <directoryMode>0755</directoryMode>
+    </dependencySet>
   </dependencySets>
 </component>
