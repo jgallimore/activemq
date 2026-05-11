@@ -100,6 +100,8 @@
         <include>${pom.groupId}:activemq-log4j-appender</include>
         <include>${pom.groupId}:activemq-jms-pool</include>
         <include>${pom.groupId}:activemq-pool</include>
+        <include>${pom.groupId}:activemq-runtime-config</include>
+        <include>org.jvnet.jaxb:jaxb-plugins-runtime</include>
         <include>org.apache.commons:commons-dbcp2</include>
         <include>org.apache.commons:commons-pool2</include>
         <include>commons-codec:commons-codec</include>
@@ -142,6 +144,10 @@
         <include>org.eclipse.jetty:jetty-io</include>
         <include>org.eclipse.jetty:jetty-util</include>
         <include>org.eclipse.jetty:jetty-security</include>
+        <include>org.eclipse.jetty:jetty-jaas</include>
+        <include>org.eclipse.jetty:jetty-jndi</include>
+        <include>org.eclipse.jetty:jetty-plus</include>
+        <include>org.eclipse.jetty:jetty-rewrite</include>
         <include>org.eclipse.jetty:jetty-servlet</include>
         <include>org.eclipse.jetty:jetty-xml</include>
         <include>org.eclipse.jetty:jetty-webapp</include>
